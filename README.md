@@ -249,8 +249,6 @@ openstack endpoint create --region RegionOne migration admin http://localhost:87
 #### Install and configure guts-api
 ```
 sudo apt-get install -y guts-api
-git clone https://github.com/aptira/python-gutsclient.git ${HOME}/python-gutsclient
-sudo -H pip install -e ${HOME}/python-gutsclient
 
 # Use this guts.conf instead
 sudo bash -c 'cat << EOF > /etc/guts/guts.conf
