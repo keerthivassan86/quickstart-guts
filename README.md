@@ -21,6 +21,7 @@ sudo apt-get update
 sudo apt-get install -y mariadb-server python-pymysql
 
 # Chose a root password accordingly. We will use `rajalokan` as the root password.
+PASSWORD=secret
 
 # Configure your mysql installation
 sudo bash -c 'cat << EOF > /etc/mysql/conf.d/openstack.cnf
@@ -37,7 +38,7 @@ sudo service mysql restart
 mysql_secure_installation
 
 # Verify Mysql Installation
-mysql -u root -prajalokan -e "SHOW DATABASES;"
+mysql -u root -p${PASSWORD} -e "SHOW DATABASES;"
 +--------------------+
 | Database           |
 +--------------------+
@@ -53,7 +54,7 @@ mysql -u root -prajalokan -e "SHOW DATABASES;"
 sudo apt-get install -y rabbitmq-server
 
 # Add a user to rabbitmq and setup permission
-sudo rabbitmqctl add_user openstack rajalokan
+sudo rabbitmqctl add_user openstack ${PASSWORD}
 sudo rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 
 # Verify Installation
@@ -68,9 +69,9 @@ openstack       []
 #### Install and configure Keystone
 ```
 # Setup Database for Keystone
-mysql -u root -prajalokan -e "CREATE DATABASE keystone;"
-mysql -u root -prajalokan -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'rajalokan';"
-mysql -u root -prajalokan -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'rajalokan';"
+mysql -u root -p${PASSWORD} -e "CREATE DATABASE keystone;"
+mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'rajalokan';"
+mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY 'rajalokan';"
 
 # Configure not to setup keystone while installing
 sudo bash -c 'cat << EOF > /etc/init/keystone.override
@@ -87,7 +88,7 @@ log_dir = /var/log/keystone
 admin_token = 1234567890
 
 [database]
-connection = mysql+pymysql://keystone:rajalokan@localhost/keystone
+connection = mysql+pymysql://keystone:secret@localhost/keystone
 
 [token]
 provider = fernet
@@ -183,7 +184,7 @@ export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
-export OS_PASSWORD=rajalokan
+export OS_PASSWORD=${PASSWORD}
 export OS_AUTH_URL=http://localhost:35357/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -198,7 +199,7 @@ export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=demo
 export OS_USERNAME=demo
-export OS_PASSWORD=demo
+export OS_PASSWORD=${PASSWORD}
 export OS_AUTH_URL=http://localhost:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -232,13 +233,13 @@ sudo apt-get update
 
 #### Create database and keystone entry for guts
 ```
-mysql -u root -prajalokan -e "CREATE DATABASE guts;"
-mysql -u root -prajalokan -e "GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'localhost' IDENTIFIED BY 'rajalokan';"
-mysql -u root -prajalokan -e "GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDENTIFIED BY 'rajalokan';"
+mysql -u root -p${PASSWORD} -e "CREATE DATABASE guts;"
+mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'localhost' IDENTIFIED BY 'rajalokan';"
+mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDENTIFIED BY 'rajalokan';"
 
 unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
 source admin_openrc
-openstack user create --domain default --password rajalokan guts
+openstack user create --domain default --password ${PASSWORD} guts
 openstack role add --project service --user guts admin
 openstack service create --name guts --description "OpenStack Migration Service" migration
 openstack endpoint create --region RegionOne migration public http://localhost:7000/v1/%\(tenant_id\)s
