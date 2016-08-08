@@ -88,7 +88,7 @@ log_dir = /var/log/keystone
 admin_token = 1234567890
 
 [database]
-connection = mysql+pymysql://keystone:secret@localhost/keystone
+connection = mysql+pymysql://keystone:rajalokan@localhost/keystone
 
 [token]
 provider = fernet
@@ -184,7 +184,7 @@ export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
-export OS_PASSWORD=${PASSWORD}
+export OS_PASSWORD=rajalokan
 export OS_AUTH_URL=http://localhost:35357/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -199,7 +199,7 @@ export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=demo
 export OS_USERNAME=demo
-export OS_PASSWORD=${PASSWORD}
+export OS_PASSWORD=rajalokan
 export OS_AUTH_URL=http://localhost:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -239,7 +239,7 @@ mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDE
 
 unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
 source admin_openrc
-openstack user create --domain default --password ${PASSWORD} guts
+openstack user create --domain default --password rajalokan guts
 openstack role add --project service --user guts admin
 openstack service create --name guts --description "OpenStack Migration Service" migration
 openstack endpoint create --region RegionOne migration public http://localhost:7000/v1/%\(tenant_id\)s
@@ -292,9 +292,15 @@ sudo service guts-api restart
 ```
 guts list
 guts source-list
+guts service-list
 ```
 
 #### Install and configure guts-scheduler
 ```
 sudo apt-get install -y guts-scheduler guts-migration
+```
+
+#### Verify scheduler and migration services are up
+```
+guts service-list
 ```
