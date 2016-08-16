@@ -21,7 +21,7 @@ sudo apt-get update
 sudo apt-get install -y mariadb-server python-pymysql
 
 # Chose a root password accordingly. We will use `rajalokan` as the root password.
-PASSWORD=secret
+PASSWORD=rajalokan
 
 # Configure your mysql installation
 sudo bash -c 'cat << EOF > /etc/mysql/conf.d/openstack.cnf
