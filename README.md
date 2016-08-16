@@ -304,3 +304,13 @@ sudo apt-get install -y guts-scheduler guts-migration
 ```
 guts service-list
 ```
+
+#### Install and configure guts-dashboard
+```
+sudo apt-get install -y openstack-dashboard
+
+# Change local_settings to use version 3.
+
+sudo apt-get install -y guts-dashboard
+sudo service apache restart
+```
