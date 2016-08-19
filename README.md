@@ -22,6 +22,7 @@ sudo apt-get install -y mariadb-server python-pymysql
 
 # Chose a root password accordingly. We will use `rajalokan` as the root password.
 PASSWORD=rajalokan
+IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
 
 # Configure your mysql installation
 sudo bash -c 'cat << EOF > /etc/mysql/conf.d/openstack.cnf
@@ -150,7 +151,7 @@ sudo rm -f /var/lib/keystone/keystone.db
 ```
 sudo apt-get install -y python-openstackclient
 export OS_TOKEN=1234567890
-export OS_URL=http://localhost:35357/v3
+export OS_URL=http://${IP_ADDR}:35357/v3
 export OS_IDENTITY_API_VERSION=3
 ```
 
@@ -159,9 +160,9 @@ export OS_IDENTITY_API_VERSION=3
 openstack user list
 openstack service list
 openstack service create --name keystone --description "OpenStack Identity" identity
-openstack endpoint create --region RegionOne identity public http://localhost:5000/v3
-openstack endpoint create --region RegionOne identity internal http://localhost:5000/v3
-openstack endpoint create --region RegionOne identity admin http://localhost:35357/v3
+openstack endpoint create --region RegionOne identity public http://${IP_ADDR}:5000/v3
+openstack endpoint create --region RegionOne identity internal http://${IP_ADDR}:5000/v3
+openstack endpoint create --region RegionOne identity admin http://${IP_ADDR}:35357/v3
 openstack domain create --description "Default Domain" default
 openstack project create --domain default --description "Admin Project" admin
 openstack user create --domain default --password rajalokan admin
@@ -185,7 +186,7 @@ export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=rajalokan
-export OS_AUTH_URL=http://localhost:35357/v3
+export OS_AUTH_URL=http://${IP_ADDR}:35357/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 EOF
@@ -200,7 +201,7 @@ export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=demo
 export OS_USERNAME=demo
 export OS_PASSWORD=rajalokan
-export OS_AUTH_URL=http://localhost:5000/v3
+export OS_AUTH_URL=http://${IP_ADDR}:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 EOF
@@ -242,9 +243,9 @@ source admin_openrc
 openstack user create --domain default --password rajalokan guts
 openstack role add --project service --user guts admin
 openstack service create --name guts --description "OpenStack Migration Service" migration
-openstack endpoint create --region RegionOne migration public http://localhost:7000/v1/%\(tenant_id\)s
-openstack endpoint create --region RegionOne migration internal http://localhost:7000/v1/%\(tenant_id\)s
-openstack endpoint create --region RegionOne migration admin http://localhost:87000/v1/%\(tenant_id\)s
+openstack endpoint create --region RegionOne migration public http://${IP_ADDR}:7000/v1/%\(tenant_id\)s
+openstack endpoint create --region RegionOne migration internal http://${IP_ADDR}:7000/v1/%\(tenant_id\)s
+openstack endpoint create --region RegionOne migration admin http://${IP_ADDR}:87000/v1/%\(tenant_id\)s
 ```
 
 #### Install and configure guts-api
