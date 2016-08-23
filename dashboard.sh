@@ -7,6 +7,15 @@ fi
 
 KEYSTONE_HOST=$1
 
+# Keep track of the DevStack directory
+TOP_DIR=$(cd $(dirname "$0") && pwd)
+
+# Update
+sudo apt-get update
+
+# Upgrade
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+
 sudo apt-get install -y openstack-dashboard
 
 # Change local_settings to use version 3.
