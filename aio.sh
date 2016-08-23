@@ -9,7 +9,8 @@ TOP_DIR=$(cd $(dirname "$0") && pwd)
 sudo apt-get update
 
 # Upgrade
-sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+#sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+# sudo apt-get upgrade
 
 sudo apt-get install -y ubuntu-cloud-keyring
 sudo apt-add-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main'
