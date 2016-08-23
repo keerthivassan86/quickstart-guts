@@ -16,6 +16,10 @@ sudo apt-get update
 # Upgrade
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 
+sudo apt-get install -y ubuntu-cloud-keyring
+sudo apt-add-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main'
+sudo apt-get update
+
 sudo apt-get install -y openstack-dashboard
 
 # Change local_settings to use version 3.
@@ -26,7 +30,7 @@ OPENSTACK_API_VERSIONS = {
 }
 EOF'
 
-sudo sed -i "s@^OPENSTACK_HOST.*@OPENSTACK_HOST = '${KEYSTONE_HOST}'@" local_settings.py
+sudo sed -i "s@^OPENSTACK_HOST.*@OPENSTACK_HOST = '${KEYSTONE_HOST}'@" /etc/openstack-dashboard/local_settings.py
 
 sudo service apache2 restart
 
