@@ -153,7 +153,7 @@ openstack role add --project demo --user demo user
 unset OS_TOKEN OS_URL
 
 # Generate admin openrc
-cat > admin_openrc << EOF
+cat > /home/ubuntu/admin_openrc << EOF
 export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=admin
@@ -168,7 +168,7 @@ source admin_openrc
 openstack user list && openstack service list
 
 # Generate demo openrc
-cat > demo_openrc << EOF
+cat > /home/ubuntu/demo_openrc << EOF
 export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=demo
