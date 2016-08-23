@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 
 #set -o xtrace
@@ -6,14 +6,14 @@
 TOP_DIR=$(cd $(dirname "$0") && pwd)
 
 # Update
-#sudo apt-get update
+sudo apt-get update
 
 # Upgrade
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 
 sudo apt-get install -y ubuntu-cloud-keyring
 sudo apt-add-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main'
-#sudo apt-get update
+sudo apt-get update
 
 PASSWORD=rajalokan
 IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
