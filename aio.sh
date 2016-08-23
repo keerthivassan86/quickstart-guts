@@ -9,11 +9,10 @@ TOP_DIR=$(cd $(dirname "$0") && pwd)
 sudo apt-get update
 
 # Upgrade
-#sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-# sudo apt-get upgrade
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 
-# sudo apt-get install -y ubuntu-cloud-keyring
-# sudo apt-add-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main'
+sudo apt-get install -y ubuntu-cloud-keyring
+sudo apt-add-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main'
 sudo apt-get update
 
 PASSWORD=rajalokan
@@ -26,14 +25,14 @@ echo "mariadb-server mysql-server/root_password_again password ${PASSWORD}" | su
 sudo apt-get -y install mariadb-server python-pymysql
 
 # Configure your mysql installation
-sudo bash -c "cat << EOF > /etc/mysql/conf.d/openstack.cnf
+sudo bash -c 'cat << EOF > /etc/mysql/conf.d/openstack.cnf
 [mysqld]
 default-storage-engine = innodb
 innodb_file_per_table
 max_connections = 4096
 collation-server = utf8_general_ci
 character-set-server = utf8
-EOF"
+EOF'
 
 # Restart and setup secure installation
 sudo service mysql restart
@@ -62,15 +61,15 @@ EOF
 
 
 # Configure not to setup keystone while installing
-sudo bash -c "cat << EOF > /etc/init/keystone.override
+sudo bash -c 'cat << EOF > /etc/init/keystone.override
 manual
-EOF"
+EOF'
 
 # Install keystone & apache
 sudo apt-get install -y keystone apache2 libapache2-mod-wsgi
 
 # Use this keysotne.conf instead
-sudo bash -c "cat << EOF > /etc/keystone/keystone.conf
+sudo bash -c 'cat << EOF > /etc/keystone/keystone.conf
 [DEFAULT]
 log_dir = /var/log/keystone
 admin_token = 1234567890
@@ -83,13 +82,13 @@ provider = fernet
 
 [extra_headers]
 Distribution = Ubuntu
-EOF"
+EOF'
 
 #### Sync DB and setup fernet
 sudo su -s /bin/sh -c "keystone-manage db_sync" keystone
 sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
 
-sudo bash -c "cat <<EOF > /etc/apache2/sites-available/keystone.conf
+sudo bash -c 'cat <<EOF > /etc/apache2/sites-available/keystone.conf
 Listen 5000
 Listen 35357
 
@@ -122,7 +121,7 @@ Listen 35357
         Require all granted
     </Directory>
 </VirtualHost>
-EOF"
+EOF'
 
 sudo ln -s /etc/apache2/sites-available/keystone.conf /etc/apache2/sites-enabled
 sudo service apache2 restart
