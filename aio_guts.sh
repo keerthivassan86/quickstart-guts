@@ -202,8 +202,8 @@ sudo apt-get update
 #### Create database and keystone entry for guts
 mysql -u root -p${PASSWORD} << EOF
 CREATE DATABASE guts;
-GRANT ALL PRIVILEGES ON keystone.* TO 'guts'@'localhost' IDENTIFIED BY '${PASSWORD}';
-GRANT ALL PRIVILEGES ON keystone.* TO 'guts'@'%' IDENTIFIED BY '${PASSWORD}';
+GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'localhost' IDENTIFIED BY '${PASSWORD}';
+GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDENTIFIED BY '${PASSWORD}';
 EOF
 
 
