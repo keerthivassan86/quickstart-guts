@@ -33,8 +33,13 @@ collation-server = utf8_general_ci
 character-set-server = utf8
 EOF'
 
+echo "hello"
+
+exit 0
+
 # Restart and setup secure installation
 sudo service mysql restart
+
 # TODO: Automate this
 # mysql_secure_installation
 
