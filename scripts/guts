@@ -1,0 +1,109 @@
+#!/bin/bash
+
+function add_guts_repo {
+    # Setup guts repo
+    sudo apt-add-repository 'deb [arch=amd64] http://guts.stackbuffet.com/deb/ trusty-updates/mitaka main'
+
+    sudo bash -c 'cat << EOF > /etc/apt/preferences
+Package: *
+Pin: origin "180.148.27.143"
+Pin-Priority: 999
+EOF'
+
+    sudo bash -c 'cat << EOF > /etc/apt/apt.conf.d/98stackbuffet
+APT::Get::AllowUnauthenticated "true";
+EOF'
+
+    sudo apt-get update
+}
+
+function setup_guts_database {
+    PASSWORD=$1
+
+    #### Create database and keystone entry for guts
+    mysql -u root -p${PASSWORD} << EOF
+#CREATE DATABASE guts;
+GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'localhost' IDENTIFIED BY '${PASSWORD}';
+GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDENTIFIED BY '${PASSWORD}';
+EOF
+
+}
+
+function populate_keystone_guts {
+    unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
+
+    source ${HOME}/admin_openrc
+
+    openstack user create --domain default --password rajalokan guts
+    openstack role add --project service --user guts admin
+    openstack service create --name guts --description "OpenStack Migration Service" migration
+    openstack endpoint create --region RegionOne migration public http://${IP_ADDR}:7000/v1/%\(tenant_id\)s
+    openstack endpoint create --region RegionOne migration internal http://${IP_ADDR}:7000/v1/%\(tenant_id\)s
+    openstack endpoint create --region RegionOne migration admin http://${IP_ADDR}:87000/v1/%\(tenant_id\)s
+}
+
+
+function install_guts {
+    #### Install and configure guts-api, guts-scheduler & guts-migration
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y guts-api guts-scheduler guts-migration
+}
+
+function configure_guts {
+    # Use this guts.conf instead
+    sudo bash -c 'cat << EOF > /etc/guts/guts.conf
+[DEFAULT]
+osapi_migration_workers = 2
+rpc_backend = rabbit
+debug = True
+auth_strategy = keystone
+
+[keystone_authtoken]
+auth_uri = http://localhost:5000
+auth_url = http://localhost:35357
+memcached_servers = localhost:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = guts
+password = rajalokan
+
+[database]
+connection = mysql+pymysql://guts:rajalokan@localhost/guts
+
+[oslo_concurrency]
+lock_path = /var/lib/guts
+
+[oslo_messaging_rabbit]
+rabbit_userid = openstack
+rabbit_password = rajalokan
+rabbit_host = 127.0.0.1
+EOF'
+
+    #### Sync db
+    sudo su -s /bin/sh -c "guts-manage db sync" guts
+    sudo service guts-api restart
+}
+
+function verify_guts {
+    #### Verify Guts API
+    guts list
+    guts source-list
+    guts service-list
+
+    guts source-create dummy_source guts.migration.drivers.dummy.DummySourceDriver --params path="/tmp/dummy_source.json"
+    guts resource-list
+
+    guts destination-create dummy_destination guts.migration.drivers.dummy.DummyDestinationDriver --capabilities 'instance,network,volume' --params 'path=/tmp/dummy_destination.json'
+    guts destination-list
+    # guts create --name dummy_migration --description "Dummy Migration to verify working of all services" f24c7071-d75d-4388-a6b7-10e878fd5a78 1238db63-c6e2-42e4-b1ed-daed9b8a95cc
+
+}
+
+function setup_guts {
+    add_guts_repo
+    # setup_guts_database
+    # populate_keystone_guts
+    # verify_guts
+
+}

@@ -1,0 +1,157 @@
+#!/bin/bash
+
+# IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
+
+function setup_keystone_database {
+
+    PASSWORD=$1
+
+    mysql -u root -p${PASSWORD} -e "CREATE DATABASE keystone;"
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '${PASSWORD}'; ";
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '${PASSWORD}'; "
+
+}
+
+function install_keystone {
+    # Install keystone & apache
+    sudo apt-get install -y keystone apache2 libapache2-mod-wsgi
+}
+
+function configure_keystone {
+    # Use this keysotne.conf instead
+    sudo bash -c "cat << EOF > /etc/keystone/keystone.conf
+[DEFAULT]
+log_dir = /var/log/keystone
+admin_token = 1234567890
+
+[database]
+connection = mysql+pymysql://keystone:${PASSWORD}@localhost/keystone
+
+[token]
+provider = fernet
+
+[extra_headers]
+Distribution = Ubuntu
+EOF"
+
+    sudo su -s /bin/sh -c "keystone-manage db_sync" keystone
+    sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+
+sudo bash -c 'cat <<EOF > /etc/apache2/sites-available/keystone.conf
+Listen 5000
+Listen 35357
+
+<VirtualHost *:5000>
+    WSGIDaemonProcess keystone-public processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
+    WSGIProcessGroup keystone-public
+    WSGIScriptAlias / /usr/bin/keystone-wsgi-public
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    ErrorLogFormat "%{cu}t %M"
+    ErrorLog /var/log/apache2/keystone.log
+    CustomLog /var/log/apache2/keystone_access.log combined
+
+    <Directory /usr/bin>
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:35357>
+    WSGIDaemonProcess keystone-admin processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
+    WSGIProcessGroup keystone-admin
+    WSGIScriptAlias / /usr/bin/keystone-wsgi-admin
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    ErrorLogFormat "%{cu}t %M"
+    ErrorLog /var/log/apache2/keystone.log
+    CustomLog /var/log/apache2/keystone_access.log combined
+
+    <Directory /usr/bin>
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF'
+
+    if [[ ! -L /etc/apache2/sites-enabled/keystone.conf ]]; then
+        sudo ln -s /etc/apache2/sites-available/keystone.conf /etc/apache2/sites-enabled
+    fi
+    sudo service apache2 restart
+    sudo rm -f /var/lib/keystone/keystone.db
+}
+
+function populate_keystone_basic {
+    export OS_TOKEN=1234567890
+    export OS_URL=http://${IP_ADDR}:35357/v3
+    export OS_IDENTITY_API_VERSION=3
+
+    openstack user list
+    openstack service list
+    openstack service create --name keystone --description "OpenStack Identity" identity
+    openstack endpoint create --region RegionOne identity public http://${IP_ADDR}:5000/v3
+    openstack endpoint create --region RegionOne identity internal http://${IP_ADDR}:5000/v3
+    openstack endpoint create --region RegionOne identity admin http://${IP_ADDR}:35357/v3
+    openstack domain create --description "Default Domain" default
+    openstack project create --domain default --description "Admin Project" admin
+    openstack user create --domain default --password rajalokan admin
+    openstack role create admin
+    openstack role add --project admin --user admin admin
+    openstack project create --domain default --description "Service Project" service
+    openstack project create --domain default --description "Demo Project" demo
+    openstack user create --domain default --password rajalokan demo
+    openstack role create user
+    openstack role add --project demo --user demo user
+
+    unset OS_TOKEN OS_URL
+}
+
+function populate_openrc {
+    # Generate admin openrc
+
+    cat > ${HOME}/admin_openrc << EOF
+export OS_PROJECT_DOMAIN_NAME=default
+export OS_USER_DOMAIN_NAME=default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=rajalokan
+export OS_AUTH_URL=http://${IP_ADDR}:35357/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+EOF
+
+    # Generate demo openrc
+    cat > ${HOME}/demo_openrc << EOF
+export OS_PROJECT_DOMAIN_NAME=default
+export OS_USER_DOMAIN_NAME=default
+export OS_PROJECT_NAME=demo
+export OS_USERNAME=demo
+export OS_PASSWORD=rajalokan
+export OS_AUTH_URL=http://${IP_ADDR}:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+EOF
+
+
+}
+
+function verify_keystone {
+    unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
+
+    source ${HOME}/admin_openrc
+    openstack user list && openstack service list
+
+    unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
+    source ${HOME}/demo_openrc
+    openstack user list && openstack service list
+}
+
+
+function setup_keystone {
+    PASSWORD=$1
+
+    setup_keystone_database ${PASSWORD}
+    # install_keystone
+    # configure_keystone
+    # populate_keystone_basic
+    # populate_openrc
+    # verify_keystone
+}

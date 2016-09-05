@@ -1,0 +1,15 @@
+#!/bin/bash
+
+sudo apt-get install -y openstack-dashboard
+
+# Change local_settings to use version 3.
+sudo bash -c 'cat << EOF >> /etc/openstack-dashboard/local_settings.py
+
+OPENSTACK_API_VERSIONS = {
+    "identity": 3
+}
+EOF'
+
+sudo sed -i "s@^OPENSTACK_HOST.*@OPENSTACK_HOST = '${KEYSTONE_HOST}'@" /etc/openstack-dashboard/local_settings.py
+
+sudo service apache2 restart

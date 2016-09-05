@@ -91,6 +91,8 @@ resources:
                 echo "CLOUD_INIT STARTING"
                 echo "==================="
                 echo "BLANK"
-                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/setup-openstack.sh -O /tmp/setup.sh && chmod +x /tmp/setup.sh && /tmp/setup.sh" ubuntu
+                echo "Okan"
+                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-guts.sh -O /tmp/dashboard.sh && chmod +x /tmp/dashboard.sh && /tmp/dashboard.sh 192.168.167.14" ubuntu
+                echo "done"
 
             user_data_format: RAW

@@ -266,3 +266,14 @@ sudo apt-get install -y guts-scheduler guts-migration
 
 #### Verify scheduler and migration services are up
 guts service-list
+
+
+guts source-list
+guts resource-list
+guts source-create dummy_source guts.migration.drivers.dummy.DummySourceDriver --params path="/tmp/dummy_source.json"
+guts resource-list
+
+guts destination-create dummy_destination guts.migration.drivers.dummy.DummyDestinationDriver --capabilities 'instance,network,volume' --params 'path=/tmp/dummy_destination.json'
+guts destination-list
+
+# guts create --name dummy_migration --description "Dummy Migration to verify working of all services" f24c7071-d75d-4388-a6b7-10e878fd5a78 1238db63-c6e2-42e4-b1ed-daed9b8a95cc
