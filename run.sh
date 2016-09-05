@@ -12,6 +12,7 @@ SCRIPTS_DIR=${TOP_DIR}/scripts
 CONFIG_DIR=${TOP_DIR}/configs
 
 PASSWORD=rajalokan
+IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
 
 function common {
     source ${SCRIPTS_DIR}/common

@@ -22,14 +22,7 @@ function install_cloud_keyring {
     sudo apt-get update
 }
 
-function install_clients {
-    sudo apt-get install -y python-openstackclient
-}
-
 function install_mysql {
-
-    PASSWORD=$1
-
     # Install mysql
     echo "mariadb-server mysql-server/root_password password ${PASSWORD}" | sudo debconf-set-selections
     echo "mariadb-server mysql-server/root_password_again password ${PASSWORD}" | sudo debconf-set-selections
@@ -57,9 +50,6 @@ EOF'
 }
 
 function install_rabbitmq {
-
-    PASSWORD=$1
-
     ### Setup RabbitMQ
     sudo apt-get -y install rabbitmq-server
 
@@ -67,5 +57,8 @@ function install_rabbitmq {
     sudo rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 
     sudo rabbitmqctl list_users
+}
 
+function install_clients {
+    sudo apt-get install -y python-openstackclient
 }

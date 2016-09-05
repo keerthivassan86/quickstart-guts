@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
+OPENRC_DIR="/opt/openrc"
 
 function setup_keystone_database {
     mysql -u root -p${PASSWORD} -e "CREATE DATABASE keystone;"
@@ -108,25 +108,26 @@ function populate_keystone_basic {
 
 function populate_openrc {
     # Generate admin openrc
+    sudo mkdir -p ${OPENRC_DIR} && sudo chown -R ${USER}:${USER} ${OPENRC_DIR}
 
-    cat > /opt/admin_openrc << EOF
+    cat > ${OPENRC_DIR}/admin << EOF
 export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
-export OS_PASSWORD=rajalokan
+export OS_PASSWORD=${PASSWORD}
 export OS_AUTH_URL=http://${IP_ADDR}:35357/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 EOF
 
     # Generate demo openrc
-    cat > /opt/demo_openrc << EOF
+    cat > ${OPENRC_DIR}/demo << EOF
 export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=demo
 export OS_USERNAME=demo
-export OS_PASSWORD=rajalokan
+export OS_PASSWORD=${PASSWORD}
 export OS_AUTH_URL=http://${IP_ADDR}:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
@@ -138,18 +139,16 @@ EOF
 function verify_keystone {
     unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
 
-    source /opt/admin_openrc
+    source ${OPENRC_DIR}/admin
     openstack user list && openstack service list
 
     unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
-    source /opt/demo_openrc
+    source ${OPENRC_DIR}/demo
     openstack user list && openstack service list
 }
 
 
 function setup_keystone {
-    PASSWORD=$1
-
     setup_keystone_database
     install_keystone
     configure_keystone
