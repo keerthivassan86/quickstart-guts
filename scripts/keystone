@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
+IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
 
 function setup_keystone_database {
 
