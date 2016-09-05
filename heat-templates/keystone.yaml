@@ -92,7 +92,7 @@ resources:
                 echo "==================="
                 echo "BLANK"
                 echo "Okan"
-                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-guts.sh -O /tmp/dashboard.sh && chmod +x /tmp/dashboard.sh && /tmp/dashboard.sh 192.168.167.14" ubuntu
+                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && /tmp/quickstart-os.sh keystone" ubuntu
                 echo "done"
 
             user_data_format: RAW

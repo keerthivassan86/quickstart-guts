@@ -27,7 +27,7 @@ function keystone {
     echo "Setting up MySQL + RabbitMQ + Keystone"
 
     # Setup common services
-    # common
+    common
 
     source ${SCRIPTS_DIR}/keystone
     setup_keystone ${PASSWORD}

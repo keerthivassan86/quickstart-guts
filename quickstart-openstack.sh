@@ -119,7 +119,7 @@ function is_package_installed {
 
 # ////////////
 
-OPT_DIR="/home/ubuntu"
+OPT_DIR="/opt"
 cd ${OPT_DIR}
 
 QUICKSTART_DIR="${OPT_DIR}/quickstart-guts"
