@@ -17,6 +17,7 @@ sudo apt-get update
 
 PASSWORD=rajalokan
 IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
+echo "Your IP Address is ${IP_ADDR}"
 
 # Install mysql
 echo "mariadb-server mysql-server/root_password password ${PASSWORD}" | sudo debconf-set-selections

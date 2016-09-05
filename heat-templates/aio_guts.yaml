@@ -1,0 +1,26 @@
+heat_template_version: 2014-10-16
+
+description: HOT template to create a security group for alok
+
+resources:
+    dashboard:
+        type: OS::Nova::Server
+        properties:
+            name: gutsdev
+            key_name: "alok"
+            image: "7dd4e1d6-f0d6-4407-aee2-f4ddf6736df1"
+            flavor: "m1.medium"
+            networks: [{
+                "floating_ip": "180.148.27.165",
+                "network": "c6b5ef54-c7d0-4b1b-bdd2-e5f16efe060c"
+            }]
+            security_groups: [
+                "default"
+            ]
+            user_data: |
+                #!/bin/sh
+                echo "==================="
+                echo "CLOUD_INIT STARTING"
+                echo "==================="
+                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/aio_guts.sh -O /tmp/aio_guts.sh && chmod +x /tmp/aio_guts.sh && /tmp/aio_guts.sh"
+            user_data_format: RAW

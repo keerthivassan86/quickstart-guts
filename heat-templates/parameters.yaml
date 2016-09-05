@@ -1,0 +1,17 @@
+parameters:
+    image:
+        type: string
+        label: Image ID
+        default: "7dd4e1d6-f0d6-4407-aee2-f4ddf6736df1"
+        description: "The Image ID to use"
+        constraints:
+            - custom_constraint: glance.image
+              description: Must identify an image known to Glance
+    # default_security_group:
+    #     type: string
+    #     label: Security Group ID
+    #     default:
+    #     description: "The Security Group ID to use"
+    #     constraints:
+    #         - custom_constraint:
+    #
