@@ -1,7 +1,5 @@
 #!/bin/bash
 
-OPENRC_DIR="/opt/openrc"
-
 function setup_keystone_database {
     mysql -u root -p${PASSWORD} -e "CREATE DATABASE keystone;"
     mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '${PASSWORD}'; ";

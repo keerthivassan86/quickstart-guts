@@ -18,11 +18,10 @@ EOF'
 }
 
 function setup_guts_database {
-    PASSWORD=$1
 
     #### Create database and keystone entry for guts
     mysql -u root -p${PASSWORD} << EOF
-#CREATE DATABASE guts;
+CREATE DATABASE guts;
 GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'localhost' IDENTIFIED BY '${PASSWORD}';
 GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDENTIFIED BY '${PASSWORD}';
 EOF
@@ -32,9 +31,9 @@ EOF
 function populate_keystone_guts {
     unset `env | grep OS_ | cut -d'=' -f1 | xargs` && env | grep OS_
 
-    source ${HOME}/admin_openrc
+    source ${OPENRC_DIR}/admin
 
-    openstack user create --domain default --password rajalokan guts
+    openstack user create --domain default --password ${PASSWORD} guts
     openstack role add --project service --user guts admin
     openstack service create --name guts --description "OpenStack Migration Service" migration
     openstack endpoint create --region RegionOne migration public http://${IP_ADDR}:7000/v1/%\(tenant_id\)s
@@ -102,8 +101,10 @@ function verify_guts {
 
 function setup_guts {
     add_guts_repo
-    # setup_guts_database
-    # populate_keystone_guts
-    # verify_guts
+    setup_guts_database
+    populate_keystone_guts
+    install_guts
+    configure_guts
+    verify_guts
 
 }

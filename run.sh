@@ -10,6 +10,8 @@ fi
 TOP_DIR=$(cd $(dirname "$0") && pwd)
 SCRIPTS_DIR=${TOP_DIR}/scripts
 CONFIG_DIR=${TOP_DIR}/configs
+OPENRC_DIR="/opt/openrc"
+
 
 PASSWORD=rajalokan
 IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
@@ -36,17 +38,18 @@ function keystone {
 
 function guts {
     echo "Setting up MySQL + RabbitMQ + Keystone + Guts"
-    # keystone
+
+    keystone
 
     source ${SCRIPTS_DIR}/guts
-    setup_guts ${PASSWORD}
+    setup_guts
 }
 
 function horizon {
     echo "Settings up MySQL + RabbitMQ + Keystone + Horizon"
 
     source ${SCRIPTS_DIR}/horizon
-    setup_horizon ${PASSWORD}
+    setup_horizon
 }
 
 function guts-dashboard {
@@ -56,7 +59,7 @@ function guts-dashboard {
     horizon
 
     source ${SCRIPTS_DIR}/guts-dashboard
-    setup_guts_dashboard ${PASSWORD}
+    setup_guts_dashboard
 }
 
 case ${1} in
