@@ -18,8 +18,8 @@ function common {
 
     update_and_upgrade
     install_cloud_keyring
-    install_mysql ${PASSWORD}
-    install_rabbitmq ${PASSWORD}
+    install_mysql
+    install_rabbitmq
     install_clients
 }
 
@@ -30,7 +30,7 @@ function keystone {
     common
 
     source ${SCRIPTS_DIR}/keystone
-    setup_keystone ${PASSWORD}
+    setup_keystone
 }
 
 function guts {
