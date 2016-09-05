@@ -149,9 +149,9 @@ function setup_keystone {
     PASSWORD=$1
 
     setup_keystone_database ${PASSWORD}
-    # install_keystone
-    # configure_keystone
-    # populate_keystone_basic
-    # populate_openrc
-    # verify_keystone
+    install_keystone
+    configure_keystone
+    populate_keystone_basic
+    populate_openrc
+    verify_keystone
 }
