@@ -6,7 +6,7 @@ function add_guts_repo {
 
     sudo bash -c 'cat << EOF > /etc/apt/preferences
 Package: *
-Pin: origin "180.148.27.143"
+Pin: origin "guts.stackbuffet.com"
 Pin-Priority: 999
 EOF'
 

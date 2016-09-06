@@ -35,29 +35,29 @@ function keystone {
 }
 
 function guts {
-    # Setup Keystone
+    # Setup common services + keystone + guts
     keystone
 
     source ${SCRIPTS_DIR}/guts
     setup_guts
 }
 
-function horizon {
-    echo "Settings up MySQL + RabbitMQ + Keystone + Horizon"
-
-    source ${SCRIPTS_DIR}/horizon
-    setup_horizon
-}
-
 function guts-dashboard {
-    echo "Settings up MySQL + RabbitMQ + Keystone + Horizon + Guts + Guts-dashboard"
-
+    # Setup common services + keystone + guts + horizon + guts-dashboard
     guts
     horizon
 
     source ${SCRIPTS_DIR}/guts-dashboard
     setup_guts_dashboard
 }
+
+function horizon {
+    # Setup horizon
+    source ${SCRIPTS_DIR}/horizon
+    setup_horizon
+}
+
+
 
 case ${1} in
 "keystone")
