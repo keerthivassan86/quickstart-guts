@@ -82,10 +82,12 @@ EOF"
     #### Sync db
     sudo su -s /bin/sh -c "guts-manage db sync" guts
     sudo service guts-api restart
+    echo "Done Configuring Guts"
 }
 
 function verify_guts {
     #### Verify Guts API
+    echo "Verify Guts"
     guts list
     guts source-list
     guts service-list
