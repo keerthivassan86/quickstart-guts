@@ -107,5 +107,5 @@ function setup_guts {
     populate_keystone_guts
     install_guts
     configure_guts
-    verify_guts
+    # verify_guts
 }
