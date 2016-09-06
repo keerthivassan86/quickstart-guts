@@ -63,14 +63,14 @@ case ${1} in
 "keystone")
     keystone
     ;;
-"horizon")
-    horizon
-    ;;
 "guts")
     guts
     ;;
 "guts-dashboard")
     guts-dashboard
+    ;;
+"horizon")
+    horizon
     ;;
 *)
     echo "Nothing"
