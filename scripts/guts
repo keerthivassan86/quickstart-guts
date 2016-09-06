@@ -49,7 +49,7 @@ function install_guts {
 
 function configure_guts {
     # Use this guts.conf instead
-    sudo bash -c 'cat << EOF > /etc/guts/guts.conf
+    sudo bash -c "cat << EOF > /etc/guts/guts.conf
 [DEFAULT]
 osapi_migration_workers = 2
 rpc_backend = rabbit
@@ -65,19 +65,19 @@ project_domain_name = default
 user_domain_name = default
 project_name = service
 username = guts
-password = rajalokan
+password = ${PASSWORD}
 
 [database]
-connection = mysql+pymysql://guts:rajalokan@localhost/guts
+connection = mysql+pymysql://guts:${PASSWORD}@localhost/guts
 
 [oslo_concurrency]
 lock_path = /var/lib/guts
 
 [oslo_messaging_rabbit]
 rabbit_userid = openstack
-rabbit_password = rajalokan
+rabbit_password = ${PASSWORD}
 rabbit_host = 127.0.0.1
-EOF'
+EOF"
 
     #### Sync db
     sudo su -s /bin/sh -c "guts-manage db sync" guts
@@ -106,5 +106,4 @@ function setup_guts {
     install_guts
     configure_guts
     verify_guts
-
 }

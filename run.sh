@@ -27,8 +27,6 @@ function common {
 }
 
 function keystone {
-    echo "Setting up MySQL + RabbitMQ + Keystone"
-
     # Setup common services
     common
 
@@ -37,8 +35,7 @@ function keystone {
 }
 
 function guts {
-    echo "Setting up MySQL + RabbitMQ + Keystone + Guts"
-
+    # Setup Keystone
     keystone
 
     source ${SCRIPTS_DIR}/guts
