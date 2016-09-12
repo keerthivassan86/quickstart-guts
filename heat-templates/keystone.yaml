@@ -79,7 +79,7 @@ resources:
     server:
         type: OS::Nova::Server
         properties:
-            name: okanstack
+            name: { get_param: name }
             key_name: { get_param: keypair }
             image: { get_param: image }
             flavor: { get_param: flavor }

@@ -8,9 +8,11 @@ fi
 
 # Keep track of the root directory
 TOP_DIR=$(cd $(dirname "$0") && pwd)
+OPT_DIR="/opt"
 SCRIPTS_DIR=${TOP_DIR}/scripts
 CONFIG_DIR=${TOP_DIR}/configs
-OPENRC_DIR="/opt/openrc"
+OPENRC_DIR="${OPT_DIR}/openrc"
+STACK_DIR="${OPT_DIR}/stack"
 
 
 PASSWORD=rajalokan
@@ -45,8 +47,8 @@ function guts {
 function guts_source {
     keystone
 
-    # source ${SCRIPTS_DIR}/guts
-    # setup_guts_source
+    source ${SCRIPTS_DIR}/guts
+    setup_guts_source
 }
 
 function guts-dashboard {

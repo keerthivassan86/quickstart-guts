@@ -2,7 +2,7 @@
 include constants
 
 boot_keystone:
-	heat stack-create -e "heat-templates/local-env.yaml" -f "heat-templates/keystone.yaml" gutsdev
+	heat stack-create -P name="keystone" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_181} -f "heat-templates/keystone.yaml" keystone
 
 boot_guts:
 	heat stack-create -e "heat-templates/local-env.yaml" -f "heat-templates/guts.yaml" gutsdev

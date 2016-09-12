@@ -103,28 +103,36 @@ function verify_guts {
 
 function add_guts_user_and_permissions {
     SERVICE=guts
-    sudo useradd --home-dir "/var/lib/$SERVICE" \
-        --create-home \
-        --system \
-        --shell /bin/false \
-        $SERVICE
+    if ! $(getent passwd guts >/dev/null 2>&1); then
+        echo "creating guts user"
+        sudo useradd --home-dir "/var/lib/$SERVICE" \
+            --create-home \
+            --system \
+            --shell /bin/false \
+            $SERVICE
+    fi
 
     #Create essential dirs
-    mkdir -p /var/log/$SERVICE
-    mkdir -p /etc/$SERVICE
+    sudo mkdir -p /var/log/$SERVICE
+    sudo mkdir -p /etc/$SERVICE
 
     #Set ownership of the dirs
-    chown -R $SERVICE:$SERVICE /var/log/$SERVICE
-    chown -R $SERVICE:$SERVICE /var/lib/$SERVICE
-    chown $SERVICE:$SERVICE /etc/$SERVICE
+    sudo chown -R $SERVICE:$SERVICE /var/log/$SERVICE
+    sudo chown -R $SERVICE:$SERVICE /var/lib/$SERVICE
+    sudo chown $SERVICE:$SERVICE /etc/$SERVICE
+}
 
+function clone_and_install {
+    package=$1
+    git clone https://github.com/aptira/${package}.git ${STACK_DIR}/${package}
+    sudo -H pip install -e ${STACK_DIR}/${package}
 }
 
 function install_guts_source {
-    git clone https://github.com/aptira/guts.git
-    cd $SERVICE
-    cp -R $SERVICE/etc/* /etc/$SERVICE/
-    pip install –e .
+    sudo mkdir -p ${STACK_DIR} && sudo chown -R ${USER}:${USER} ${STACK_DIR}
+    clone_and_install guts
+    cd ${STACK_DIR}/guts && sudo cp -R etc/* /etc/
+    clone_and_install python-gutsclient
 }
 
 
@@ -143,4 +151,6 @@ function setup_guts_source {
     setup_guts_database
     populate_keystone_guts
     install_guts_source
+    configure_guts
+    # verify_guts
 }
