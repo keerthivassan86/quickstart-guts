@@ -81,7 +81,6 @@ EOF"
 
     #### Sync db
     sudo su -s /bin/sh -c "guts-manage db sync" guts
-    sudo service guts-api restart
     echo "Done Configuring Guts"
 }
 
@@ -142,6 +141,7 @@ function setup_guts {
     populate_keystone_guts
     install_guts
     configure_guts
+    sudo service guts-api restart
     # verify_guts
 }
 

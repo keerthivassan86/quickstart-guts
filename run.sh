@@ -51,7 +51,7 @@ function guts_source {
     setup_guts_source
 }
 
-function guts-dashboard {
+function guts_dashboard {
     # Setup common services + keystone + guts + horizon + guts-dashboard
     guts
     horizon
@@ -75,13 +75,13 @@ case ${1} in
 "guts")
     guts
     ;;
-"guts-dashboard")
-    guts-dashboard
+"guts_dashboard")
+    guts_dashboard
     ;;
 "horizon")
     horizon
     ;;
-"devbox")
+"guts_source")
     guts_source
     ;;
 *)
