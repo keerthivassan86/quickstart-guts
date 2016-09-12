@@ -101,6 +101,33 @@ function verify_guts {
 
 }
 
+function add_guts_user_and_permissions {
+    SERVICE=guts
+    sudo useradd --home-dir "/var/lib/$SERVICE" \
+        --create-home \
+        --system \
+        --shell /bin/false \
+        $SERVICE
+
+    #Create essential dirs
+    mkdir -p /var/log/$SERVICE
+    mkdir -p /etc/$SERVICE
+
+    #Set ownership of the dirs
+    chown -R $SERVICE:$SERVICE /var/log/$SERVICE
+    chown -R $SERVICE:$SERVICE /var/lib/$SERVICE
+    chown $SERVICE:$SERVICE /etc/$SERVICE
+
+}
+
+function install_guts_source {
+    git clone https://github.com/aptira/guts.git
+    cd $SERVICE
+    cp -R $SERVICE/etc/* /etc/$SERVICE/
+    pip install –e .
+}
+
+
 function setup_guts {
     add_guts_repo
     setup_guts_database
@@ -108,4 +135,12 @@ function setup_guts {
     install_guts
     configure_guts
     # verify_guts
+}
+
+
+function setup_guts_source {
+    add_guts_user_and_permissions
+    setup_guts_database
+    populate_keystone_guts
+    install_guts_source
 }

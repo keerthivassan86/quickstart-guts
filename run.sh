@@ -42,6 +42,13 @@ function guts {
     setup_guts
 }
 
+function guts_source {
+    keystone
+
+    # source ${SCRIPTS_DIR}/guts
+    # setup_guts_source
+}
+
 function guts-dashboard {
     # Setup common services + keystone + guts + horizon + guts-dashboard
     guts
@@ -71,6 +78,9 @@ case ${1} in
     ;;
 "horizon")
     horizon
+    ;;
+"devbox")
+    guts_source
     ;;
 *)
     echo "Nothing"
