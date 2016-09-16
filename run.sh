@@ -23,8 +23,11 @@ function update_and_upgrade {
 }
 
 function common {
+    source ${SCRIPTS_DIR}/common
     update_and_upgrade
+}
 
+function openstack_common {
     source ${SCRIPTS_DIR}/common
     install_cloud_keyring
     install_mysql
@@ -35,6 +38,7 @@ function common {
 function keystone {
     # Setup common services
     common
+    openstack_common
 
     source ${SCRIPTS_DIR}/keystone
     setup_keystone
@@ -70,11 +74,15 @@ function horizon {
     setup_horizon
 }
 
+function playbox {
+    common
+}
+
 
 
 case ${1} in
 "playbox")
-    update_and_upgrade
+    playbox
     ;;
 "keystone")
     keystone
