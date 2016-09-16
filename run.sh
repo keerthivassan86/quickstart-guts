@@ -18,10 +18,14 @@ STACK_DIR="${OPT_DIR}/stack"
 PASSWORD=rajalokan
 IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
 
-function common {
-    source ${SCRIPTS_DIR}/common
-
+function update_and_upgrade {
     update_and_upgrade
+}
+
+function common {
+    update_and_upgrade
+
+    source ${SCRIPTS_DIR}/common
     install_cloud_keyring
     install_mysql
     install_rabbitmq
@@ -69,6 +73,9 @@ function horizon {
 
 
 case ${1} in
+"playbox")
+    update_and_upgrade
+    ;;
 "keystone")
     keystone
     ;;
