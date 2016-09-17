@@ -18,9 +18,6 @@ STACK_DIR="${OPT_DIR}/stack"
 PASSWORD=rajalokan
 IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
 
-function update_and_upgrade {
-    update_and_upgrade
-}
 
 function common {
     source ${SCRIPTS_DIR}/common
@@ -28,7 +25,7 @@ function common {
 }
 
 function openstack_common {
-    source ${SCRIPTS_DIR}/common
+    source ${SCRIPTS_DIR}/openstack_common
     install_cloud_keyring
     install_mysql
     install_rabbitmq
@@ -36,71 +33,62 @@ function openstack_common {
 }
 
 function keystone {
-    # Setup common services
-    common
-    openstack_common
-
     source ${SCRIPTS_DIR}/keystone
     setup_keystone
 }
 
 function guts {
-    # Setup common services + keystone + guts
-    keystone
-
     source ${SCRIPTS_DIR}/guts
     setup_guts
 }
 
 function guts_source {
-    keystone
-
     source ${SCRIPTS_DIR}/guts
     setup_guts_source
 }
 
-function guts_dashboard {
-    # Setup common services + keystone + guts + horizon + guts-dashboard
-    guts
-    horizon
-
-    source ${SCRIPTS_DIR}/guts-dashboard
-    setup_guts_dashboard
-}
-
 function horizon {
-    # Setup horizon
     source ${SCRIPTS_DIR}/horizon
     setup_horizon
 }
 
-function playbox {
-    common
+function guts_dashboard {
+    source ${SCRIPTS_DIR}/guts-dashboard
+    setup_guts_dashboard
 }
-
 
 
 case ${1} in
 "playbox")
-    playbox
+    common
     ;;
 "keystone")
+    common
+    openstack_common
     keystone
     ;;
 "guts")
+    common
+    openstack_common
+    keystone
     guts
     ;;
-"guts_dashboard")
-    guts_dashboard
-    ;;
-"horizon")
-    horizon
-    ;;
 "guts_source")
+    common
+    openstack_common
+    keystone
     guts_source
     ;;
+"guts_dashboard")
+    common
+    openstack_common
+    keystone
+    guts
+    horizon
+    guts_dashboard
+    ;;
 *)
-    echo "Nothing"
+    echo "Nothing to deploy"
     ;;
 esac
 
