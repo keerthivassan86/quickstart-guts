@@ -18,3 +18,6 @@ boot_okanbox:
 
 boot_playbox:
 	heat stack-create -P name="playbox" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_163} -f "heat-templates/playbox.yaml" playbox
+
+build_u1404:
+	cd packer && ./packer build -var-file variables.json u1404.json
