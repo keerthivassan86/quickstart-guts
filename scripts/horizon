@@ -20,3 +20,24 @@ EOF'
 
     sudo service apache2 restart
 }
+
+
+function setup_horizon_source {
+    git clone https://github.com/openstack/horizon.git -b stable/mitaka /opt/stack/horizon
+    cd /opt/stack/horizon
+    pip install -e /opt/stack/horizon
+    cp openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py
+    cat >> openstack_dashboard/local/local_settings.py << EOF
+
+OPENSTACK_API_VERSIONS = {
+    "identity": 3
+}
+EOF
+    python /opt/stack/horizon/manage.py runserver 0.0.0.0:8888
+
+    git clone https://github.com/aptira/guts-dashboard.git  /opt/stack/guts-dashboard
+    sudo -H pip install -e /opt/stack/python-gutsclient
+    sudo -H pip install -e /opt/stack/guts-dashboard
+
+
+}

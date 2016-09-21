@@ -87,6 +87,12 @@ case ${1} in
     horizon
     guts_dashboard
     ;;
+"guts_dashboard_source")
+    common
+    openstack_common
+    keystone
+    guts_source
+    ;;
 *)
     echo "Nothing to deploy"
     ;;
