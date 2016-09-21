@@ -8,7 +8,7 @@ boot_guts:
 	heat stack-create -P name="guts" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -f "heat-templates/guts.yaml" guts
 
 boot_guts_dashboard:
-	heat stack-create -P name="gdashboard" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -f "heat-templates/guts_dashboard.yaml" guts_dashboard
+	heat stack-create -P name="gdashboard" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_181} -f "heat-templates/guts_dashboard.yaml" guts_dashboard
 
 boot_guts_source:
 	heat stack-create -P name="gsource" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P keypair='cloud' -f "heat-templates/guts_source.yaml" guts_source
