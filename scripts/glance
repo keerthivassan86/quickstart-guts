@@ -1,0 +1,100 @@
+#!/bin/bash
+
+function setup_glance_database {
+    mysql -u root -p${PASSWORD} -e "CREATE DATABASE glance;"
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY '${PASSWORD}'; ";
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY '${PASSWORD}'; "
+}
+
+function populate_keystone_glance {
+
+    source ${OPENRC_DIR}/admin
+
+    openstack user create --domain default --password ${PASSWORD} glance
+    openstack role add --project service --user glance admin
+    openstack service create --name glance --description "OpenStack Image" image
+    openstack endpoint create --region RegionOne image public http://${IP_ADDR}:9292
+    openstack endpoint create --region RegionOne image internal http://${IP_ADDR}:9292
+    openstack endpoint create --region RegionOne image admin http://${IP_ADDR}:9292
+}
+
+function install_glance {
+    sudo apt-get install -y glance
+}
+
+function configure_glance {
+    sudo bash -c "cat << EOF > /etc/glance/glance-api.conf
+[DEFAULT]
+
+[keystone_authtoken]
+auth_uri = http://${IP_ADDR}:5000
+auth_url = http://${IP_ADDR}:35357
+memcached_servers = ${IP_ADDR}:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = glance
+password = ${PASSWORD}
+
+[database]
+connection = mysql+pymysql://glance:${PASSWORD}@localhost/glance
+
+[paste_deploy]
+flavor = keystone
+
+[glance_store]
+stores = file,http
+default_store = file
+filesystem_store_datadir = /var/lib/glance/images/
+
+EOF"
+
+sudo bash -c "cat << EOF > /etc/glance/glance-registry.conf
+[DEFAULT]
+
+[keystone_authtoken]
+auth_uri = http://${IP_ADDR}:5000
+auth_url = http://${IP_ADDR}:35357
+memcached_servers = ${IP_ADDR}:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = glance
+password = ${PASSWORD}
+
+[database]
+connection = mysql+pymysql://glance:${PASSWORD}@localhost/glance
+
+[paste_deploy]
+flavor = keystone
+
+EOF"
+
+}
+
+function populate_database {
+    sudo su -s /bin/sh -c "glance-manage db_sync" glance
+}
+
+function restart_glance_services {
+    service glance-registry restart
+    service glance-api restart
+}
+
+function upload_image {
+    wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -O /tmp/cirros.img
+    openstack image create "cirros" --file /tmp/cirros.img --disk-format qcow2 --container-format bare --public
+    openstack image list
+}
+
+function setup_glance {
+    setup_glance_database
+    populate_keystone_glance
+    install_glance
+    configure_glance
+    populate_database
+    restart_glance_services
+    upload_image
+}

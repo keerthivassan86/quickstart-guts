@@ -37,6 +37,21 @@ function keystone {
     setup_keystone
 }
 
+function glance {
+    source ${SCRIPTS_DIR}/glance
+    setup_glance
+}
+
+function nova {
+    source ${SCRIPTS_DIR}/nova
+    setup_nova
+}
+
+function neutron {
+    source ${SCRIPTS_DIR}/neutron
+    setup_neutron
+}
+
 function guts {
     source ${SCRIPTS_DIR}/guts
     setup_guts
@@ -86,6 +101,15 @@ case ${1} in
     guts
     horizon
     guts_dashboard
+    ;;
+"aio")
+    common
+    openstack_common
+    keystone
+    glance
+    nova
+    neutron
+    horizon
     ;;
 *)
     echo "Nothing to deploy"

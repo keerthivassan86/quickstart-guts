@@ -1,0 +1,98 @@
+#!/bin/bash
+
+function setup_nova_database {
+    mysql -u root -p${PASSWORD} -e "CREATE DATABASE nova_api;"
+    mysql -u root -p${PASSWORD} -e "CREATE DATABASE nova;"
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY '${PASSWORD}'; ";
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY '${PASSWORD}'; "
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY '${PASSWORD}'; ";
+    mysql -u root -p${PASSWORD} -e "GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '${PASSWORD}'; "
+}
+
+function populate_keystone_nova {
+    source ${OPENRC_DIR}/admin
+
+    openstack user create --domain default --password ${PASSWORD} nova
+    openstack role add --project service --user nova admin
+    openstack service create --name nova --description "OpenStack Image" compute
+    openstack endpoint create --region RegionOne compute public http://${IP_ADDR}:8774/v2.1/%\(tenant_id\)s
+    openstack endpoint create --region RegionOne compute internal http://${IP_ADDR}:8774/v2.1/%\(tenant_id\)s
+    openstack endpoint create --region RegionOne compute admin http://${IP_ADDR}:8774/v2.1/%\(tenant_id\)s
+}
+
+function install_nova {
+    sudo apt-get -y install nova-api nova-conductor nova-consoleauth nova-novncproxy nova-scheduler nova-compute
+}
+
+function configure_nova {
+    sudo bash -c "cat << EOF > /etc/nova/nova.conf
+[DEFAULT]
+enabled_apis = osapi_compute,metadata
+rpc_backend = rabbit
+auth_strategy = keystone
+my_ip = ${IP_ADDR}
+use_neutron = True
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+logdir = /var/log/nova
+state_path=/var/lib/nova
+
+[keystone_authtoken]
+auth_uri = http://${IP_ADDR}:5000
+auth_url = http://${IP_ADDR}:35357
+memcached_servers = ${IP_ADDR}:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = nova
+password = ${PASSWORD}
+
+[oslo_messaging_rabbit]
+rabbit_host = ${IP_ADDR}
+rabbit_userid = openstack
+rabbit_password = ${PASSWORD}
+
+[api_database]
+connection = mysql+pymysql://nova:${PASSWORD}@localhost/nova_api
+
+[database]
+connection = mysql+pymysql://nova:${PASSWORD}@localhost/nova
+
+[vnc]
+vncserver_listen = ${IP_ADDR}
+vncserver_proxyclient_address = ${IP_ADDR}
+
+[glance]
+api_servers = http://${IP_ADDR}:9292
+
+[oslo_concurrency]
+lock_path = /var/lib/nova/tmp
+
+[libvirt]
+virt_type = qemu
+
+EOF"
+}
+
+function populate_database {
+    sudo su -s /bin/sh -c "nova-manage api_db sync" nova
+    sudo su -s /bin/sh -c "nova-manage db sync" nova
+}
+
+function restart_nova_services {
+    sudo service nova-api restart
+    sudo service nova-consoleauth restart
+    sudo service nova-scheduler restart
+    sudo service nova-conductor restart
+    sudo service nova-novncproxy restart
+    sudo service nova-compute restart
+}
+
+function setup_nova {
+    setup_nova_database
+    populate_keystone_nova
+    install_nova
+    configure_nova
+    populate_database
+    restart_nova_services
+}

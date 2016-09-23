@@ -18,5 +18,6 @@ EOF'
         sudo sed -i "s@^OPENSTACK_HOST.*@OPENSTACK_HOST = '${KEYSTONE_HOST}'@" /etc/openstack-dashboard/local_settings.py
     fi
 
+    sudo apt-get purge -y openstack-dashboard-ubuntu-theme
     sudo service apache2 restart
 }
