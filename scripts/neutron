@@ -19,10 +19,13 @@ function populate_keystone_neutron {
 }
 
 function install_neutron_components {
-    sudo apt-get install -y neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent neutron-metadata-agent
+    # sudo apt-get install -y neutron-server neutron-plugin-ml2 neutron-linuxbridge-agent neutron-l3-agent neutron-dhcp-agent neutron-metadata-agent
+    # sudo apt-get -y install neutron-plugin-openvswitch neutron-plugin-openvswitch-agent
+    sudo apt-get -y install neutron-server neutron-plugin-ml2 neutron-dhcp-agent neutron-l3-agent neutron-metadata-agent openvswitch-switch
+    sudo apt-get -y install neutron-plugin-openvswitch neutron-openvswitch-agent
 }
 
-function configure_neutron {
+function configure_neutron_server {
     sudo bash -c "cat << EOF > /etc/neutron/neutron.conf
 [DEFAULT]
 core_plugin = ml2
@@ -63,63 +66,70 @@ username = nova
 password = ${PASSWORD}
 
 EOF"
+}
 
+function configure_ml2_plugin {
 
-sudo bash -c "cat << EOF > /etc/neutron/plugins/ml2/ml2_conf.ini
+    sudo bash -c "cat << EOF > /etc/neutron/plugins/ml2/ml2_conf.ini
 [ml2]
-type_drivers = flat,vlan,vxlan
-tenant_network_types = vxlan
-mechanism_drivers = linuxbridge,l2population
+type_drivers = flat,vlan
+tenant_network_types = vlan,flat
+mechanism_drivers = openvswitch
 extension_drivers = port_security
 
 [ml2_type_flat]
-flat_networks = provider
+# flat_networks = provider
+flat_networks = External
+
+[ml2_type_vlan]
+network_vlan_ranges=Intnet1:100:200
+
+[ml2_type_gre]
 
 [ml2_type_vxlan]
-vni_ranges = 1:1000
 
 [securitygroup]
-enable_ipset = True
+firewall_driver=neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+enable_security_group=True
+#enable_ipset = True
+
+[ovs]
+bridge_mappings=External:br-ex,Intnet1:br-eth1
 
 EOF"
+}
 
-sudo bash -c "cat << EOF > /etc/neutron/plugins/ml2/linuxbridge_agent.ini
-[linux_bridge]
-physical_interface_mappings = br:eth0
-
-[vxlan]
-enable_vxlan = True
-local_ip = ${IP_ADDR}
-l2_population = True
-
-[securitygroup]
-enable_security_group = True
-firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
-
-EOF"
-
-sudo bash -c "cat << EOF > /etc/neutron/l3_agent.ini
+function configure_metadata_agent {
+    sudo bash -c "cat << EOF > /etc/neutron/metadata_agent.ini
 [DEFAULT]
-interface_driver = neutron.agent.linux.interface.BridgeInterfaceDriver
-external_network_bridge =
-
-EOF"
-
-sudo bash -c "cat << EOF > /etc/neutron/dhcp_agent.ini
-[DEFAULT]
-interface_driver = neutron.agent.linux.interface.BridgeInterfaceDriver
-dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
-enable_isolated_metadata = True
-
-EOF"
-
-sudo bash -c "cat << EOF > /etc/neutron/metadata_agent.ini
-[DEFAULT]
-nova_metadata_ip = ${IP_ADDR}
+nova_metadata_ip = 192.168.33.2
 metadata_proxy_shared_secret = ${PASSWORD}
 EOF"
 
-sudo bash -c "cat << EOF >> /etc/nova/nova.conf
+}
+
+function configure_dhcp_agent {
+    sudo bash -c "cat << EOF > /etc/neutron/dhcp_agent.ini
+[DEFAULT]
+interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
+enable_isolated_metadata = True
+dnsmasq_dns_servers = 8.8.8.8
+
+EOF"
+}
+
+function configure_l3_agent {
+    sudo bash -c "cat << EOF > /etc/neutron/l3_agent.ini
+[DEFAULT]
+interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+use_namespaces = True
+
+EOF"
+}
+
+function configure_nova_for_neutron {
+    sudo bash -c "cat << EOF >> /etc/nova/nova.conf
 
 [neutron]
 url = http://${IP_ADDR}:9696
@@ -135,7 +145,14 @@ service_metadata_proxy = True
 metadata_proxy_shared_secret = ${PASSWORD}
 
 EOF"
+}
 
+function configure_neutron {
+    configure_neutron_server
+    configure_ml2_plugin
+    configure_metadata_agent
+    configure_dhcp_agent
+    configure_l3_agent
 }
 
 function populate_database {
@@ -145,7 +162,8 @@ function populate_database {
 function restart_neutron_services {
     sudo service nova-api restart
     sudo service neutron-server restart
-    sudo service neutron-linuxbridge-agent restart
+    # sudo service neutron-linuxbridge-agent restart
+    sudo service neutron-plugin-openvswitch-agent restart
     sudo service neutron-dhcp-agent restart
     sudo service neutron-metadata-agent restart
     sudo service neutron-l3-agent restart
@@ -158,11 +176,11 @@ function configure_compute_for_neutron {
 }
 
 function setup_neutron {
-    setup_neutron_database
-    populate_keystone_neutron
-    install_neutron_components
+    # setup_neutron_database
+    # populate_keystone_neutron
+    # install_neutron_components
     configure_neutron
     populate_database
     restart_neutron_services
-    configure_compute_for_neutron
+    # configure_compute_for_neutron
 }

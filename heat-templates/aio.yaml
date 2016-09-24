@@ -54,28 +54,37 @@ parameters:
         type: string
         label: Security Group Name
         description: "The Security Group Name to use"
-    floating_ip:
-        type: string
-        label: "Floating IP ID"
-        description: "Floating IP ID to use"
+    # floating_ip:
+    #     type: string
+    #     label: "Floating IP ID"
+    #     description: "Floating IP ID to use"
 
 resources:
-    port:
+    port_a:
         type: OS::Neutron::Port
         properties:
-            name: { get_param: name }
+            name: network_port_1
             network_id: { get_param: network }
             fixed_ips:
                 - subnet_id: { get_param: subnet }
             security_groups:
                 - { get_param: security_group }
-    floatingip_ass:
-        type: OS::Neutron::FloatingIPAssociation
+    port_b:
+        type: OS::Neutron::Port
         properties:
-            floatingip_id: { get_param: floating_ip }
-            port_id: { get_resource: port }
-        depends_on:
-            - port
+            name: network_port_2
+            network_id: "7e3a8437-6c6c-45bd-a702-278a84cac5f8"
+            fixed_ips:
+                - subnet_id: "3f05e16b-5d38-45f5-8ee6-5b343a68e380"
+            security_groups:
+                - { get_param: security_group }
+    # floatingip_ass:
+    #     type: OS::Neutron::FloatingIPAssociation
+    #     properties:
+    #         floatingip_id: { get_param: floating_ip }
+    #         port_id: { get_resource: port }
+    #     depends_on:
+    #         - port
     server:
         type: OS::Nova::Server
         properties:
@@ -84,13 +93,14 @@ resources:
             image: { get_param: image }
             flavor: { get_param: flavor }
             networks:
-                - port: { get_resource: port }
+                - port: { get_resource: port_a }
+                - port: { get_resource: port_b }
             user_data: |
                 #!/bin/sh
                 echo "==================="
                 echo "CLOUD_INIT STARTING"
                 echo "==================="
-                # su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh playbox" ubuntu
+                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh" ubuntu
                 echo "done"
 
             user_data_format: RAW

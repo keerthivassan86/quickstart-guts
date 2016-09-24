@@ -1,0 +1,571 @@
+[general]
+
+# Path to a public key to install on servers. If a usable key has not
+# been installed on the remote servers, the user is prompted for a
+# password and this key is installed so the password will not be
+# required again.
+CONFIG_SSH_KEY=/root/.ssh/id_rsa.pub
+
+# Default password to be used everywhere (overridden by passwords set
+# for individual services or users).
+CONFIG_DEFAULT_PASSWORD=rajalokan
+
+# Specify 'y' to install MariaDB. ['y', 'n']
+CONFIG_MARIADB_INSTALL=y
+
+# Specify 'y' to install OpenStack Image Service (glance). ['y', 'n']
+CONFIG_GLANCE_INSTALL=y
+
+# Specify 'y' to install OpenStack Block Storage (cinder). ['y', 'n']
+CONFIG_CINDER_INSTALL=n
+
+# Specify 'y' to install OpenStack Shared File System (manila). ['y',
+# 'n']
+CONFIG_MANILA_INSTALL=n
+
+# Specify 'y' to install OpenStack Compute (nova). ['y', 'n']
+CONFIG_NOVA_INSTALL=y
+
+# Specify 'y' to install OpenStack Networking (neutron); otherwise,
+# Compute Networking (nova) will be used. ['y', 'n']
+CONFIG_NEUTRON_INSTALL=y
+
+# Specify 'y' to install OpenStack Dashboard (horizon). ['y', 'n']
+CONFIG_HORIZON_INSTALL=y
+
+# Specify 'y' to install OpenStack Object Storage (swift). ['y', 'n']
+CONFIG_SWIFT_INSTALL=n
+
+# Specify 'y' to install OpenStack Metering (ceilometer). ['y', 'n']
+CONFIG_CEILOMETER_INSTALL=n
+
+# Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
+CONFIG_HEAT_INSTALL=n
+
+# Specify 'y' to install OpenStack Data Processing (sahara). ['y',
+# 'n']
+CONFIG_SAHARA_INSTALL=n
+
+# Specify 'y' to install OpenStack Database (trove) ['y', 'n']
+CONFIG_TROVE_INSTALL=n
+
+# Specify 'y' to install OpenStack Bare Metal Provisioning (ironic).
+# ['y', 'n']
+CONFIG_IRONIC_INSTALL=n
+
+# Specify 'y' to install the OpenStack Client packages (command-line
+# tools). An admin "rc" file will also be installed. ['y', 'n']
+CONFIG_CLIENT_INSTALL=y
+
+# Comma-separated list of NTP servers. Leave plain if Packstack
+# should not install ntpd on instances.
+CONFIG_NTP_SERVERS=
+
+# Specify 'y' to install Nagios to monitor OpenStack hosts. Nagios
+# provides additional tools for monitoring the OpenStack environment.
+# ['y', 'n']
+CONFIG_NAGIOS_INSTALL=n
+
+# Comma-separated list of servers to be excluded from the
+# installation. This is helpful if you are running Packstack a second
+# time with the same answer file and do not want Packstack to
+# overwrite these server's configurations. Leave empty if you do not
+# need to exclude any servers.
+EXCLUDE_SERVERS=
+
+# Specify 'y' if you want to run OpenStack services in debug mode;
+# otherwise, specify 'n'. ['y', 'n']
+CONFIG_DEBUG_MODE=n
+
+# IP address of the server on which to install OpenStack services
+# specific to the controller role (for example, API servers or
+# dashboard).
+CONFIG_CONTROLLER_HOST=192.168.2.6
+
+# List of IP addresses of the servers on which to install the Compute
+# service.
+CONFIG_COMPUTE_HOSTS=192.168.2.6
+
+# List of IP addresses of the server on which to install the network
+# service such as Compute networking (nova network) or OpenStack
+# Networking (neutron).
+CONFIG_NETWORK_HOSTS=192.168.2.6
+
+# Specify 'y' if you want to use VMware vCenter as hypervisor and
+# storage; otherwise, specify 'n'. ['y', 'n']
+CONFIG_VMWARE_BACKEND=n
+
+# Specify 'y' if you want to use unsupported parameters. This should
+# be used only if you know what you are doing. Issues caused by using
+# unsupported options will not be fixed before the next major release.
+# ['y', 'n']
+CONFIG_UNSUPPORTED=n
+
+# Specify 'y' if you want to use subnet addresses (in CIDR format)
+# instead of interface names in following options:
+# CONFIG_NOVA_COMPUTE_PRIVIF, CONFIG_NOVA_NETWORK_PRIVIF,
+# CONFIG_NOVA_NETWORK_PUBIF, CONFIG_NEUTRON_OVS_BRIDGE_IFACES,
+# CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF.
+# This is useful for cases when interface names are not same on all
+# installation hosts.
+CONFIG_USE_SUBNETS=n
+
+# (Unsupported!) IP address of the server on which to install
+# OpenStack services specific to storage servers such as Image or
+# Block Storage services.
+CONFIG_STORAGE_HOST=192.168.2.6
+
+# Specify 'y' to enable the EPEL repository (Extra Packages for
+# Enterprise Linux). ['y', 'n']
+CONFIG_USE_EPEL=n
+
+# Comma-separated list of URLs for any additional yum repositories,
+# to use for installation.
+CONFIG_REPO=
+
+# Specify 'y' to enable the RDO testing repository. ['y', 'n']
+CONFIG_ENABLE_RDO_TESTING=n
+
+# To subscribe each server with Red Hat Subscription Manager, include
+# this with CONFIG_RH_PW.
+CONFIG_RH_USER=
+
+# To subscribe each server to receive updates from a Satellite
+# server, provide the URL of the Satellite server. You must also
+# provide a user name (CONFIG_SATELLITE_USERNAME) and password
+# (CONFIG_SATELLITE_PASSWORD) or an access key (CONFIG_SATELLITE_AKEY)
+# for authentication.
+CONFIG_SATELLITE_URL=
+
+# To subscribe each server with Red Hat Subscription Manager, include
+# this with CONFIG_RH_USER.
+CONFIG_RH_PW=
+
+# Specify 'y' to enable RHEL optional repositories. ['y', 'n']
+CONFIG_RH_OPTIONAL=y
+
+# HTTP proxy to use with Red Hat Subscription Manager.
+CONFIG_RH_PROXY=
+
+# Port to use for Red Hat Subscription Manager's HTTP proxy.
+CONFIG_RH_PROXY_PORT=
+
+# User name to use for Red Hat Subscription Manager's HTTP proxy.
+CONFIG_RH_PROXY_USER=
+
+# Password to use for Red Hat Subscription Manager's HTTP proxy.
+CONFIG_RH_PROXY_PW=
+
+# User name to authenticate with the RHN Satellite server; if you
+# intend to use an access key for Satellite authentication, leave this
+# blank.
+CONFIG_SATELLITE_USER=
+
+# Password to authenticate with the RHN Satellite server; if you
+# intend to use an access key for Satellite authentication, leave this
+# blank.
+CONFIG_SATELLITE_PW=
+
+# Access key for the Satellite server; if you intend to use a user
+# name and password for Satellite authentication, leave this blank.
+CONFIG_SATELLITE_AKEY=
+
+# Certificate path or URL of the certificate authority to verify that
+# the connection with the Satellite server is secure. If you are not
+# using Satellite in your deployment, leave this blank.
+CONFIG_SATELLITE_CACERT=
+
+# Profile name that should be used as an identifier for the system in
+# RHN Satellite (if required).
+CONFIG_SATELLITE_PROFILE=
+
+# Comma-separated list of flags passed to the rhnreg_ks command.
+# Valid flags are: novirtinfo, norhnsd, nopackages ['novirtinfo',
+# 'norhnsd', 'nopackages']
+CONFIG_SATELLITE_FLAGS=
+
+# HTTP proxy to use when connecting to the RHN Satellite server (if
+# required).
+CONFIG_SATELLITE_PROXY=
+
+# User name to authenticate with the Satellite-server HTTP proxy.
+CONFIG_SATELLITE_PROXY_USER=
+
+# User password to authenticate with the Satellite-server HTTP proxy.
+CONFIG_SATELLITE_PROXY_PW=
+
+# Specify filepath for CA cert file. If CONFIG_SSL_CACERT_SELFSIGN is
+# set to 'n' it has to be preexisting file.
+CONFIG_SSL_CACERT_FILE=/etc/pki/tls/certs/selfcert.crt
+
+# Specify filepath for CA cert key file. If
+# CONFIG_SSL_CACERT_SELFSIGN is set to 'n' it has to be preexisting
+# file.
+CONFIG_SSL_CACERT_KEY_FILE=/etc/pki/tls/private/selfkey.key
+
+# Enter the path to use to store generated SSL certificates in.
+CONFIG_SSL_CERT_DIR=~/packstackca/
+
+# Specify 'y' if you want Packstack to pregenerate the CA
+# Certificate.
+CONFIG_SSL_CACERT_SELFSIGN=y
+
+# Enter the selfsigned CAcert subject country.
+CONFIG_SELFSIGN_CACERT_SUBJECT_C=--
+
+# Enter the selfsigned CAcert subject state.
+CONFIG_SELFSIGN_CACERT_SUBJECT_ST=State
+
+# Enter the selfsigned CAcert subject location.
+CONFIG_SELFSIGN_CACERT_SUBJECT_L=City
+
+# Enter the selfsigned CAcert subject organization.
+CONFIG_SELFSIGN_CACERT_SUBJECT_O=openstack
+
+# Enter the selfsigned CAcert subject organizational unit.
+CONFIG_SELFSIGN_CACERT_SUBJECT_OU=packstack
+
+# Enter the selfsigned CAcert subject common name.
+CONFIG_SELFSIGN_CACERT_SUBJECT_CN=playbox.novalocal
+
+CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL=admin@playbox.novalocal
+
+# Service to be used as the AMQP broker. Allowed values are: qpid,
+# rabbitmq ['qpid', 'rabbitmq']
+CONFIG_AMQP_BACKEND=rabbitmq
+
+# IP address of the server on which to install the AMQP service.
+CONFIG_AMQP_HOST=192.168.2.6
+
+# Specify 'y' to enable SSL for the AMQP service. ['y', 'n']
+CONFIG_AMQP_ENABLE_SSL=n
+
+# Specify 'y' to enable authentication for the AMQP service. ['y',
+# 'n']
+CONFIG_AMQP_ENABLE_AUTH=n
+
+# Password for the NSS certificate database of the AMQP service.
+CONFIG_AMQP_NSS_CERTDB_PW=PW_PLACEHOLDER
+
+# User for AMQP authentication.
+CONFIG_AMQP_AUTH_USER=amqp_user
+
+# Password for AMQP authentication.
+CONFIG_AMQP_AUTH_PASSWORD=PW_PLACEHOLDER
+
+# IP address of the server on which to install MariaDB. If a MariaDB
+# installation was not specified in CONFIG_MARIADB_INSTALL, specify
+# the IP address of an existing database server (a MariaDB cluster can
+# also be specified).
+CONFIG_MARIADB_HOST=192.168.2.6
+
+# User name for the MariaDB administrative user.
+CONFIG_MARIADB_USER=root
+
+# Password for the MariaDB administrative user.
+# CONFIG_MARIADB_PW=55ac4ee00a424129
+
+# Password to use for the Identity service (keystone) to access the
+# database.
+# CONFIG_KEYSTONE_DB_PW=c11990f2b5f746ee
+
+# Enter y if cron job for removing soft deleted DB rows should be
+# created.
+CONFIG_KEYSTONE_DB_PURGE_ENABLE=True
+
+# Default region name to use when creating tenants in the Identity
+# service.
+CONFIG_KEYSTONE_REGION=RegionOne
+
+# Token to use for the Identity service API.
+CONFIG_KEYSTONE_ADMIN_TOKEN=63ceb1cf9ce4436c885fc94acbaad938
+
+# Email address for the Identity service 'admin' user.  Defaults to
+CONFIG_KEYSTONE_ADMIN_EMAIL=root@localhost
+
+# User name for the Identity service 'admin' user.  Defaults to
+# 'admin'.
+CONFIG_KEYSTONE_ADMIN_USERNAME=admin
+
+# Password to use for the Identity service 'admin' user.
+# CONFIG_KEYSTONE_ADMIN_PW=195e9c4c67b743c9
+
+# Password to use for the Identity service 'demo' user.
+# CONFIG_KEYSTONE_DEMO_PW=16f3794fbf2e4001
+
+# Identity service API version string. ['v2.0', 'v3']
+CONFIG_KEYSTONE_API_VERSION=v2.0
+
+# Identity service token format (UUID or PKI). The recommended format
+# for new deployments is UUID. ['UUID', 'PKI']
+CONFIG_KEYSTONE_TOKEN_FORMAT=UUID
+
+# Name of service to use to run the Identity service (keystone or
+# httpd). ['keystone', 'httpd']
+CONFIG_KEYSTONE_SERVICE_NAME=keystone
+
+# Type of Identity service backend (sql or ldap). ['sql', 'ldap']
+CONFIG_KEYSTONE_IDENTITY_BACKEND=sql
+
+# Password to use for the Image service (glance) to access the
+# database.
+# CONFIG_GLANCE_DB_PW=02e8e58d2c2a440a
+
+# Password to use for the Image service to authenticate with the
+# Identity service.
+# CONFIG_GLANCE_KS_PW=921f2f6f94934508
+
+# Storage backend for the Image service (controls how the Image
+# service stores disk images). Valid options are: file or swift
+# (Object Storage). The Object Storage service must be enabled to use
+# it as a working backend; otherwise, Packstack falls back to 'file'.
+# ['file', 'swift']
+CONFIG_GLANCE_BACKEND=file
+
+# Enter y if cron job for removing soft deleted DB rows should be
+# created.
+CONFIG_NOVA_DB_PURGE_ENABLE=True
+
+# Password to use for the Compute service (nova) to access the
+# database.
+# CONFIG_NOVA_DB_PW=e30a7c0a09ee47d5
+
+# Password to use for the Compute service to authenticate with the
+# Identity service.
+# CONFIG_NOVA_KS_PW=f8943ae7dffa488a
+
+# Overcommitment ratio for virtual to physical CPUs. Specify 1.0 to
+# disable CPU overcommitment.
+CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO=16.0
+
+# Overcommitment ratio for virtual to physical RAM. Specify 1.0 to
+# disable RAM overcommitment.
+CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO=1.5
+
+# Protocol used for instance migration. Valid options are: tcp and
+# ssh. Note that by default, the Compute user is created with the
+# /sbin/nologin shell so that the SSH protocol will not work. To make
+# the SSH protocol work, you must configure the Compute user on
+# compute hosts manually. ['tcp', 'ssh']
+CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp
+
+# Manager that runs the Compute service.
+CONFIG_NOVA_COMPUTE_MANAGER=nova.compute.manager.ComputeManager
+
+# PEM encoded certificate to be used for ssl on the https server,
+# leave blank if one should be generated, this certificate should not
+# require a passphrase. If CONFIG_HORIZON_SSL is set to 'n' this
+# parameter is ignored.
+CONFIG_VNC_SSL_CERT=
+
+# SSL keyfile corresponding to the certificate if one was entered. If
+# CONFIG_HORIZON_SSL is set to 'n' this parameter is ignored.
+CONFIG_VNC_SSL_KEY=
+
+# Private interface for flat DHCP on the Compute servers.
+CONFIG_NOVA_COMPUTE_PRIVIF=eth1
+
+# Compute Network Manager. ['^nova\.network\.manager\.\w+Manager$']
+CONFIG_NOVA_NETWORK_MANAGER=nova.network.manager.FlatDHCPManager
+
+# Public interface on the Compute network server.
+CONFIG_NOVA_NETWORK_PUBIF=eth0
+
+# Private interface for flat DHCP on the Compute network server.
+CONFIG_NOVA_NETWORK_PRIVIF=eth1
+
+# IP Range for flat DHCP. ['^[\:\.\da-fA-f]+(\/\d+){0,1}$']
+CONFIG_NOVA_NETWORK_FIXEDRANGE=192.168.32.0/22
+
+# IP Range for floating IP addresses. ['^[\:\.\da-
+# fA-f]+(\/\d+){0,1}$']
+CONFIG_NOVA_NETWORK_FLOATRANGE=10.3.4.0/22
+
+# Specify 'y' to automatically assign a floating IP to new instances.
+# ['y', 'n']
+CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP=n
+
+# First VLAN for private networks (Compute networking).
+CONFIG_NOVA_NETWORK_VLAN_START=100
+
+# Number of networks to support (Compute networking).
+CONFIG_NOVA_NETWORK_NUMBER=1
+
+# Number of addresses in each private subnet (Compute networking).
+CONFIG_NOVA_NETWORK_SIZE=255
+
+# Password to use for OpenStack Networking (neutron) to authenticate
+# with the Identity service.
+# CONFIG_NEUTRON_KS_PW=2beabaf4faf44cc7
+
+# The password to use for OpenStack Networking to access the
+# database.
+# CONFIG_NEUTRON_DB_PW=03819d03a0564c2d
+
+# The name of the Open vSwitch bridge (or empty for linuxbridge) for
+# the OpenStack Networking L3 agent to use for external  traffic.
+# Specify 'provider' if you intend to use a provider network to handle
+# external traffic.
+CONFIG_NEUTRON_L3_EXT_BRIDGE=br-ex
+
+# Password for the OpenStack Networking metadata agent.
+# CONFIG_NEUTRON_METADATA_PW=ed1b23d6ac794b0e
+
+# Specify 'y' to install OpenStack Networking's Load-Balancing-
+# as-a-Service (LBaaS). ['y', 'n']
+CONFIG_LBAAS_INSTALL=n
+
+# Specify 'y' to install OpenStack Networking's L3 Metering agent
+# ['y', 'n']
+CONFIG_NEUTRON_METERING_AGENT_INSTALL=n
+
+# Specify 'y' to configure OpenStack Networking's Firewall-
+# as-a-Service (FWaaS). ['y', 'n']
+CONFIG_NEUTRON_FWAAS=n
+
+# Specify 'y' to configure OpenStack Networking's VPN-as-a-Service
+# (VPNaaS). ['y', 'n']
+CONFIG_NEUTRON_VPNAAS=n
+
+# Comma-separated list of network-type driver entry points to be
+# loaded from the neutron.ml2.type_drivers namespace. ['local',
+# 'flat', 'vlan', 'gre', 'vxlan']
+CONFIG_NEUTRON_ML2_TYPE_DRIVERS=vxlan
+
+# Comma-separated, ordered list of network types to allocate as
+# tenant networks. The 'local' value is only useful for single-box
+# testing and provides no connectivity between hosts. ['local',
+# 'vlan', 'gre', 'vxlan']
+CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES=vxlan
+
+# Comma-separated ordered list of networking mechanism driver entry
+# points to be loaded from the neutron.ml2.mechanism_drivers
+# namespace. ['logger', 'test', 'linuxbridge', 'openvswitch',
+# 'hyperv', 'ncs', 'arista', 'cisco_nexus', 'mlnx', 'l2population']
+CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS=openvswitch
+
+# Comma-separated list of physical_network names with which flat
+# networks can be created. Use * to allow flat networks with arbitrary
+# physical_network names.
+CONFIG_NEUTRON_ML2_FLAT_NETWORKS=*
+
+# Comma-separated list of <physical_network>:<vlan_min>:<vlan_max> or
+# <physical_network> specifying physical_network names usable for VLAN
+# provider and tenant networks, as well as ranges of VLAN tags on each
+# available for allocation to tenant networks.
+CONFIG_NEUTRON_ML2_VLAN_RANGES=
+
+# Comma-separated list of <tun_min>:<tun_max> tuples enumerating
+# ranges of GRE tunnel IDs that are available for tenant-network
+# allocation. A tuple must be an array with tun_max +1 - tun_min >
+# 1000000.
+CONFIG_NEUTRON_ML2_TUNNEL_ID_RANGES=
+
+# Comma-separated list of addresses for VXLAN multicast group. If
+# left empty, disables VXLAN from sending allocate broadcast traffic
+# (disables multicast VXLAN mode). Should be a Multicast IP (v4 or v6)
+# address.
+CONFIG_NEUTRON_ML2_VXLAN_GROUP=
+
+# Comma-separated list of <vni_min>:<vni_max> tuples enumerating
+# ranges of VXLAN VNI IDs that are available for tenant network
+# allocation. Minimum value is 0 and maximum value is 16777215.
+CONFIG_NEUTRON_ML2_VNI_RANGES=10:100
+
+# Name of the L2 agent to be used with OpenStack Networking.
+# ['linuxbridge', 'openvswitch']
+CONFIG_NEUTRON_L2_AGENT=openvswitch
+
+# Comma-separated list of interface mappings for the OpenStack
+# Networking linuxbridge plugin. Each tuple in the list must be in the
+# format <physical_network>:<net_interface>. Example:
+# physnet1:eth1,physnet2:eth2,physnet3:eth3.
+CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS=
+
+# Comma-separated list of bridge mappings for the OpenStack
+# Networking Open vSwitch plugin. Each tuple in the list must be in
+# the format <physical_network>:<ovs_bridge>. Example: physnet1:br-
+# eth1,physnet2:br-eth2,physnet3:br-eth3
+CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=
+
+# Comma-separated list of colon-separated Open vSwitch
+# <bridge>:<interface> pairs. The interface will be added to the
+# associated bridge. If you desire the bridge to be persistent a value
+# must be added to this directive, also
+# CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS must be set in order to create
+# the proper port. This can be achieved from the command line by
+# issuing the following command: packstack --allinone --os-neutron-
+# ovs-bridge-mappings=ext-net:br-ex --os-neutron-ovs-bridge-interfaces
+# =br-ex:eth0
+CONFIG_NEUTRON_OVS_BRIDGE_IFACES=
+
+# Interface for the Open vSwitch tunnel. Packstack overrides the IP
+# address used for tunnels on this hypervisor to the IP found on the
+# specified interface (for example, eth1).
+CONFIG_NEUTRON_OVS_TUNNEL_IF=
+
+# VXLAN UDP port.
+CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT=4789
+
+# Specify 'y' to set up Horizon communication over https. ['y', 'n']
+CONFIG_HORIZON_SSL=n
+
+# Secret key to use for Horizon Secret Encryption Key.
+CONFIG_HORIZON_SECRET_KEY=bc87342df8d44cc7b53888221a0c463e
+
+# PEM-encoded certificate to be used for SSL connections on the https
+# server. To generate a certificate, leave blank.
+CONFIG_HORIZON_SSL_CERT=
+
+# SSL keyfile corresponding to the certificate if one was specified.
+# The certificate should not require a passphrase.
+CONFIG_HORIZON_SSL_KEY=
+
+CONFIG_HORIZON_SSL_CACERT=
+
+# Specify 'y' to provision for demo usage and testing. ['y', 'n']
+CONFIG_PROVISION_DEMO=y
+
+# Specify 'y' to configure the OpenStack Integration Test Suite
+# (tempest) for testing. The test suite requires OpenStack Networking
+# to be installed. ['y', 'n']
+CONFIG_PROVISION_TEMPEST=n
+
+# CIDR network address for the floating IP subnet.
+CONFIG_PROVISION_DEMO_FLOATRANGE=172.24.4.224/28
+
+# The name to be assigned to the demo image in Glance (default
+# "cirros").
+CONFIG_PROVISION_IMAGE_NAME=cirros
+
+# A URL or local file location for an image to download and provision
+# in Glance (defaults to a URL for a recent "cirros" image).
+CONFIG_PROVISION_IMAGE_URL=http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
+
+# Format for the demo image (default "qcow2").
+CONFIG_PROVISION_IMAGE_FORMAT=qcow2
+
+# User to use when connecting to instances booted from the demo
+# image.
+CONFIG_PROVISION_IMAGE_SSH_USER=cirros
+
+# Name of the Integration Test Suite provisioning user. If you do not
+# provide a user name, Tempest is configured in a standalone mode.
+CONFIG_PROVISION_TEMPEST_USER=
+
+# Password to use for the Integration Test Suite provisioning user.
+CONFIG_PROVISION_TEMPEST_USER_PW=PW_PLACEHOLDER
+
+# CIDR network address for the floating IP subnet.
+CONFIG_PROVISION_TEMPEST_FLOATRANGE=172.24.4.224/28
+
+# URI of the Integration Test Suite git repository.
+CONFIG_PROVISION_TEMPEST_REPO_URI=https://github.com/openstack/tempest.git
+
+# Revision (branch) of the Integration Test Suite git repository.
+CONFIG_PROVISION_TEMPEST_REPO_REVISION=master
+
+# Specify 'y' to configure the Open vSwitch external bridge for an
+# all-in-one deployment (the L3 external bridge acts as the gateway
+# for virtual machines). ['y', 'n']
+CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE=n

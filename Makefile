@@ -20,10 +20,10 @@ boot_okanbox:
 	heat stack-create -P name="okanbox" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_204} -f "heat-templates/okanbox.yaml" okanbox
 
 boot_playbox:
-	heat stack-create -P name="playbox" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_163} -f "heat-templates/playbox.yaml" playbox
+	heat stack-create -P name="playbox" -P image=${CENTOS7} -P network=${NETWORK_GUTSDEMO} -P subnet=${SUBNET_GUTSDEMO} -P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_163} -f "heat-templates/playbox.yaml" playbox
+
+boot_aio:
+	heat stack-create -P name="aio" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P keypair='cloud' -f "heat-templates/aio.yaml" aio
 
 build_u1404:
 	cd packer && ./packer build -var-file variables.json u1404.json
-
-boot_aio:
-	heat stack-create -P name="aio" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_181} -f "heat-templates/aio.yaml" aio
