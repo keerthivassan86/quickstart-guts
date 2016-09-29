@@ -1,0 +1,76 @@
+#!/bin/bash
+
+function clone_devstack {
+    sudo mkdir -p /opt/stack
+    sudo chown -R ubuntu:ubuntu /opt/stack
+    git clone https://github.com/rajalokan/devstack.git -b stable/mitaka /opt/stack/devstack
+}
+
+function setup_config_file {
+    PASSWORD=rajalokan
+    IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
+    echo "Pass is ${PASSWORD} and ip addr is ${IP_ADDR}"
+
+    # Create local.conf file
+    cat << EOF > /opt/stack/devstack/local.conf
+[[local|localrc]]
+# Default passwords
+ADMIN_PASSWORD=${PASSWORD}
+DATABASE_PASSWORD=${PASSWORD}
+RABBIT_PASSWORD=${PASSWORD}
+SERVICE_PASSWORD=${PASSWORD}
+SERVICE_TOKEN=1234567890
+
+HOST_IP=${IP_ADDR}
+SERVICE_HOST=${IP_ADDR}
+MYSQL_HOST=${IP_ADDR}
+RABBIT_HOST=${IP_ADDR}
+
+GIT_BASE=https://github.com
+NO_UPDATE_REPOS=True
+KEYSTONE_USE_MOD_WSGI=True
+USE_SCREEN=False
+
+REQUIREMENTS_BRANCH=stable/mitaka
+KEYSTONE_BRANCH=stable/mitaka
+NOVA_BRANCH=stable/mitaka
+NEUTRON_BRANCH=stable/mitaka
+GLANCE_BRANCH=stable/mitaka
+CINDER_BRANCH=stable/mitaka
+HEAT_BRANCH=stable/mitaka
+HORIZON_BRANCH=stable/mitaka
+
+disable_service n-net c-sch c-api c-vol tempest dstat zookeeper
+enable_service q-svc q-agt q-dhcp q-l3 q-meta q-lbaas neutron
+enable_plugin guts https://github.com/aptira/guts.git
+
+# Neutron Configurations
+FLAT_INTERFACE=eth0
+PUBLIC_INTERFACE=eth0
+FIXED_RANGE=10.0.0.0/24
+FLOATING_RANGE=${IP_ADDR%.*}.0/24
+PUBLIC_NETWORK_GATEWAY=${IP_ADDR%.*}.150
+Q_FLOATING_ALLOCATION_POOL=start=${IP_ADDR%.*}.151,end=${IP_ADDR%.*}.250
+Q_USE_SECGROUP=True
+Q_L3_ENABLED=True
+
+## Open vSwitch provider networking configuration
+Q_USE_PROVIDERNET_FOR_PUBLIC=True
+OVS_PHYSICAL_BRIDGE=br-ex
+PUBLIC_BRIDGE=br-ex
+OVS_BRIDGE_MAPPINGS=public:br-ex
+
+EOF
+
+}
+
+function run_devstack {
+    time /opt/stack/devstack/stack.sh
+}
+
+
+function setup_devstack {
+    clone_devstack
+    setup_config_file
+    run_devstack
+}

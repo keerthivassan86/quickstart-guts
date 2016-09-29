@@ -72,6 +72,11 @@ function guts_dashboard {
     setup_guts_dashboard
 }
 
+function devstack {
+    source ${SCRIPTS_DIR}/devstack
+    setup_devstack
+}
+
 
 case ${1} in
 "playbox")
@@ -110,6 +115,10 @@ case ${1} in
     nova
     neutron
     horizon
+    ;;
+"devstack")
+    common
+    devstack
     ;;
 *)
     echo "Nothing to deploy"
