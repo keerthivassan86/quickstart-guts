@@ -42,7 +42,7 @@ HORIZON_BRANCH=stable/mitaka
 
 disable_service n-net c-sch c-api c-vol tempest dstat zookeeper
 # enable_service q-svc q-agt q-dhcp q-l3 q-meta q-lbaas neutron
-enable_plugin guts https://github.com/aptira/guts.git
+# enable_plugin guts https://github.com/aptira/guts.git
 
 # Neutron Configurations
 # FLAT_INTERFACE=eth0
