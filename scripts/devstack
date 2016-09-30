@@ -41,15 +41,16 @@ HEAT_BRANCH=stable/mitaka
 HORIZON_BRANCH=stable/mitaka
 
 disable_service n-net c-sch c-api c-vol tempest dstat zookeeper
-enable_service q-svc q-agt q-dhcp q-l3 q-meta q-lbaas neutron
+# enable_service q-svc q-agt q-dhcp q-l3 q-meta q-lbaas neutron
 enable_plugin guts https://github.com/aptira/guts.git
 
 # Neutron Configurations
-FLAT_INTERFACE=eth0
+# FLAT_INTERFACE=eth0
 PUBLIC_INTERFACE=eth0
 FIXED_RANGE=10.0.0.0/24
 FLOATING_RANGE=${IP_ADDR%.*}.0/24
-PUBLIC_NETWORK_GATEWAY=${IP_ADDR%.*}.150
+# PUBLIC_NETWORK_GATEWAY=${IP_ADDR%.*}.150
+PUBLIC_NETWORK_GATEWAY=${IP_ADDR%.*}.1
 Q_FLOATING_ALLOCATION_POOL=start=${IP_ADDR%.*}.151,end=${IP_ADDR%.*}.250
 Q_USE_SECGROUP=True
 Q_L3_ENABLED=True
