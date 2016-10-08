@@ -13,11 +13,11 @@ fi
 if [ -f /etc/redhat-release ]; then
     # Clean yum/dnf
     if hash dnf 2>/dev/null; then
-        dnf -y clean all
+        sudo dnf -y clean all
     else
-        yum -y clean all
+        sudo yum -y clean all
     fi
 fi
 
 # Remove cloud-init files
-rm -fr /var/lib/cloud/*
+sudo rm -fr /var/lib/cloud/*
