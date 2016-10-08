@@ -2,4 +2,4 @@
 constants
 .tox/
 packer/packer
-packer/variables.json
+packer/*_variables.json

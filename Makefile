@@ -40,3 +40,6 @@ boot_devstack:
 
 build_u1404:
 	cd packer && ./packer build -var-file variables.json u1404.json
+
+build_centos7:
+	cd packer && ./packer build -var-file centos7_variables.json centos7.json
