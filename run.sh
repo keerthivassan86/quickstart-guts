@@ -17,7 +17,7 @@ STACK_DIR="${OPT_DIR}/stack"
 source $TOP_DIR/functions
 
 PASSWORD=rajalokan
-IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
+is_ubuntu && IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}') || IP_ADDR=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
 
 function common {
     source ${SCRIPTS_DIR}/common
@@ -26,10 +26,10 @@ function common {
 
 function openstack_common {
     source ${SCRIPTS_DIR}/openstack_common
-    # install_openstack_packages
+    install_openstack_packages
     install_mysql
-    # install_rabbitmq
-    # install_clients
+    install_rabbitmq
+    install_clients
 }
 
 function keystone {
@@ -85,7 +85,7 @@ case ${1} in
 "keystone")
     common
     openstack_common
-    # keystone
+    keystone
     ;;
 "guts")
     common

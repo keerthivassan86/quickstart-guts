@@ -8,11 +8,19 @@ function setup_keystone_database {
 
 function install_keystone {
     # Install keystone & apache
-    sudo bash -c 'cat << EOF > /etc/init/keystone.override
+    if is_ubuntu; then
+        sudo bash -c 'cat << EOF > /etc/init/keystone.override
 manual
 EOF'
+    fi
 
-    sudo apt-get install -y keystone apache2 libapache2-mod-wsgi
+    if is_ubuntu; then
+        ubuntu_install_package keystone apache2 libapache2-mod-wsgi
+    elif is_fedora; then
+        fedora_install_package openstack-keystone httpd mod_wsgi
+        sudo systemctl enable httpd
+        sudo systemctl start httpd
+    fi
 }
 
 function configure_keystone {
@@ -32,9 +40,60 @@ provider = fernet
 Distribution = Ubuntu
 EOF"
 
+    # Populate keystone database
     sudo su -s /bin/sh -c "keystone-manage db_sync" keystone
-    sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+    # Initialize Fernet key repositories
+    _init_fernet_key_repos
+    # Configure HTTP server
+    is_ubuntu && _configure_apache_httpd_ubuntu || _configure_apache_httpd_centos
+    # Remove file based db
+    sudo rm -f /var/lib/keystone/keystone.db
+}
 
+function _init_fernet_key_repos {
+    sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+}
+
+function _configure_apache_httpd_centos {
+    sudo bash -c 'cat <<EOF > /etc/httpd/conf.d/wsgi-keystone.conf
+Listen 5000
+Listen 35357
+
+<VirtualHost *:5000>
+    WSGIDaemonProcess keystone-public processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
+    WSGIProcessGroup keystone-public
+    WSGIScriptAlias / /usr/bin/keystone-wsgi-public
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    ErrorLogFormat "%{cu}t %M"
+    ErrorLog /var/log/httpd/keystone-error.log
+    CustomLog /var/log/httpd/keystone-access.log combined
+
+    <Directory /usr/bin>
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:35357>
+    WSGIDaemonProcess keystone-admin processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
+    WSGIProcessGroup keystone-admin
+    WSGIScriptAlias / /usr/bin/keystone-wsgi-admin
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    ErrorLogFormat "%{cu}t %M"
+    ErrorLog /var/log/httpd/keystone-error.log
+    CustomLog /var/log/httpd/keystone-access.log combined
+
+    <Directory /usr/bin>
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF'
+
+    sudo systemctl restart httpd.service
+}
+
+function _configure_apache_httpd_ubuntu {
     sudo bash -c 'cat <<EOF > /etc/apache2/sites-available/keystone.conf
 Listen 5000
 Listen 35357
@@ -75,7 +134,6 @@ EOF'
         sudo ln -s /etc/apache2/sites-available/keystone.conf /etc/apache2/sites-enabled
     fi
     sudo service apache2 restart
-    sudo rm -f /var/lib/keystone/keystone.db
 }
 
 function populate_keystone_basic {
@@ -145,12 +203,11 @@ function verify_keystone {
     openstack user list && openstack service list
 }
 
-
 function setup_keystone {
     setup_keystone_database
     install_keystone
     configure_keystone
     populate_keystone_basic
     populate_openrc
-    verify_keystone
+    # verify_keystone
 }
