@@ -4,7 +4,7 @@ if [[ $# -gt 1 ]]; then
     echo "Invalid Args"
 fi
 
-#set -o xtrace
+# set -o xtrace
 
 # Keep track of the root directory
 TOP_DIR=$(cd $(dirname "$0") && pwd)
@@ -14,10 +14,10 @@ CONFIG_DIR=${TOP_DIR}/configs
 OPENRC_DIR="${OPT_DIR}/openrc"
 STACK_DIR="${OPT_DIR}/stack"
 
+source $TOP_DIR/functions
 
 PASSWORD=rajalokan
 IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}')
-
 
 function common {
     source ${SCRIPTS_DIR}/common
@@ -26,10 +26,10 @@ function common {
 
 function openstack_common {
     source ${SCRIPTS_DIR}/openstack_common
-    install_cloud_keyring
+    # install_openstack_packages
     install_mysql
-    install_rabbitmq
-    install_clients
+    # install_rabbitmq
+    # install_clients
 }
 
 function keystone {
@@ -85,7 +85,7 @@ case ${1} in
 "keystone")
     common
     openstack_common
-    keystone
+    # keystone
     ;;
 "guts")
     common

@@ -1,16 +1,5 @@
 #!/bin/bash
 
-
-function update {
-    # Update
-    sudo apt-get update
-}
-
-function upgrade {
-    # Upgrade
-    sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-}
-
 function update_and_upgrade {
     update
     upgrade
