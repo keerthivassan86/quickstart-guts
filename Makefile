@@ -12,13 +12,22 @@ boot_cplaybox:
 	heat stack-create -P name="playbox" -P image=${CENTOS7} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
 	-P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_181} -f "heat-templates/playbox.yaml" playbox
 
-boot_keystone:
-	heat stack-create -P name="keystone" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
+boot_ukeystone:
+	heat stack-create -P name="keystone" -P image=${U1404} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
 	-P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_181} -f "heat-templates/keystone.yaml" keystone
 
-boot_guts:
-	heat stack-create -P name="guts" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
+boot_ckeystone:
+	heat stack-create -P name="keystone" -P image=${CENTOS7} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
+	-P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_181} -f "heat-templates/keystone.yaml" keystone
+
+boot_uguts:
+	heat stack-create -P name="guts" -P image=${U1404} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
 	-P security_group=${SEC_GRP_ALOK} -f "heat-templates/guts.yaml" guts
+
+boot_cguts:
+	heat stack-create -P name="guts" -P image=${CENTOS7} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
+	-P security_group=${SEC_GRP_ALOK} -f "heat-templates/guts.yaml" guts
+
 
 boot_guts_dashboard:
 	heat stack-create -P name="gdashboard" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \

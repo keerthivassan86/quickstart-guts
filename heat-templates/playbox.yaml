@@ -90,7 +90,11 @@ resources:
                 echo "==================="
                 echo "CLOUD_INIT STARTING"
                 echo "==================="
-                # su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh playbox" ubuntu
+                if [ -f /etc/redhat-release ]; then
+                    su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh playbox" ec2-user
+                elif [ -f /etc/lsb-release ]; then
+                    su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh playbox" ubuntu
+                fi
                 echo "done"
 
             user_data_format: RAW

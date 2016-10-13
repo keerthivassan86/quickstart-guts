@@ -1,7 +1,6 @@
 #!/bin/bash
 
-function add_guts_repo {
-    # Setup guts repo
+function _add_guts_repo_ubuntu {
     sudo apt-add-repository 'deb [arch=amd64] http://guts.stackbuffet.com/deb/ trusty-updates/mitaka main'
 
     sudo bash -c 'cat << EOF > /etc/apt/preferences
@@ -15,6 +14,24 @@ APT::Get::AllowUnauthenticated "true";
 EOF'
 
     sudo apt-get update
+}
+
+function _add_guts_repo_centos {
+    sudo bash -c 'cat <<EOF > /etc/yum.repos.d/guts.repo
+[stackbuffet]
+gpgcheck=0
+name=StackBuffet OpenStack packages
+baseurl=http://guts.stackbuffet.com/rpm/
+priority=10
+EOF'
+
+    sudo yum update
+
+}
+
+function add_guts_repo {
+    # Setup guts repo
+    is_ubuntu && _add_guts_repo_ubuntu || _add_guts_repo_centos
 }
 
 function setup_guts_database {
@@ -44,7 +61,8 @@ function populate_keystone_guts {
 
 function install_guts {
     #### Install and configure guts-api, guts-scheduler & guts-migration
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y guts-api guts-scheduler guts-migration
+    # sudo DEBIAN_FRONTEND=noninteractive apt-get install -y guts-api guts-scheduler guts-migration
+    install_package guts-api guts-scheduler guts-migration
 }
 
 function configure_guts {
@@ -100,6 +118,27 @@ function verify_guts {
 
 }
 
+function restart_services {
+    if is_ubuntu; then
+        echo "Restarting Services"
+    elif is_fedora; then
+        sudo systemctl enable guts-api && sudo systemctl start guts-api
+        sudo systemctl enable guts-scheduler && sudo systemctl start guts-scheduler
+        sudo systemctl enable guts-migration && sudo systemctl start guts-migration
+    fi
+}
+
+
+function setup_guts {
+    add_guts_repo
+    setup_guts_database
+    populate_keystone_guts
+    install_guts
+    configure_guts
+    restart_services
+    # verify_guts
+}
+
 function add_guts_user_and_permissions {
     SERVICE=guts
     if ! $(getent passwd guts >/dev/null 2>&1); then
@@ -132,17 +171,6 @@ function install_guts_source {
     clone_and_install guts
     cd ${STACK_DIR}/guts && sudo cp -R etc/* /etc/
     clone_and_install python-gutsclient
-}
-
-
-function setup_guts {
-    add_guts_repo
-    setup_guts_database
-    populate_keystone_guts
-    install_guts
-    configure_guts
-    sudo service guts-api restart
-    # verify_guts
 }
 
 
