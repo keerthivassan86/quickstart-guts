@@ -16,7 +16,7 @@ parameters:
     keypair:
         type: string
         label: "Key Pair Name"
-        default: "alok"
+        default: "cloud"
         description: "Key to use for SSH access"
         constraints:
             - custom_constraint: nova.keypair
