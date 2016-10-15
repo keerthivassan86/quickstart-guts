@@ -88,9 +88,9 @@ case ${1} in
     keystone
     ;;
 "guts")
-    # common
-    # openstack_common
-    # keystone
+    common
+    openstack_common
+    keystone
     guts
     ;;
 "guts_source")
