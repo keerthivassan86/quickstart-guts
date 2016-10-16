@@ -95,7 +95,7 @@ resources:
                 elif [ -f /etc/lsb-release ]; then
                     usr="ubuntu"
                 fi
-                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh keystone" ${usr}
+                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh guts" ${usr}
                 echo "done"
 
             user_data_format: RAW
