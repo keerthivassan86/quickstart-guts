@@ -150,6 +150,8 @@ function setup_guts {
     # verify_guts
 }
 
+# // GUTS from source
+
 function add_guts_user_and_permissions {
     SERVICE=guts
     if ! $(getent passwd guts >/dev/null 2>&1); then
@@ -186,10 +188,10 @@ function install_guts_source {
 
 
 function setup_gsource {
-    echo "setup gsource"
-    # add_guts_user_and_permissions
-    # setup_guts_database
-    # populate_keystone_guts
+    add_guts_user_and_permissions
+    setup_guts_database
+    populate_keystone_guts
+    # clone_and_install guts
     # install_guts_source
     # configure_guts
     # verify_guts

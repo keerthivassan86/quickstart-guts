@@ -32,11 +32,11 @@ boot_cguts:
 
 boot_ugsource:
 	heat stack-create -P name="gsource" -P image=${U1404} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
-	-P security_group=${SEC_GRP_ALOK} -P keypair='cloud' -f "heat-templates/gsource.yaml" gsource
+	-P security_group=${SEC_GRP_ALOK} -f "heat-templates/gsource.yaml" gsource
 
 boot_cgsource:
-	heat stack-create -P name="gsource" -P image=${CENTOS7} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK}
-	-P security_group=${SEC_GRP_ALOK} -P keypair='cloud' -f "heat-templates/gsource.yaml" gsource
+	heat stack-create -P name="gsource" -P image=${CENTOS7} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
+	-P security_group=${SEC_GRP_ALOK} -f "heat-templates/gsource.yaml" gsource
 
 boot_guts_dashboard:
 	heat stack-create -P name="gdashboard" -P image=${IMAGE} -P network=${NETWORK_ALOK} -P subnet=${SUBNET_ALOK} \
