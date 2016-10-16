@@ -185,11 +185,12 @@ function install_guts_source {
 }
 
 
-function setup_guts_source {
-    add_guts_user_and_permissions
-    setup_guts_database
-    populate_keystone_guts
-    install_guts_source
-    configure_guts
+function setup_gsource {
+    echo "setup gsource"
+    # add_guts_user_and_permissions
+    # setup_guts_database
+    # populate_keystone_guts
+    # install_guts_source
+    # configure_guts
     # verify_guts
 }

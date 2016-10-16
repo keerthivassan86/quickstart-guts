@@ -57,9 +57,9 @@ function guts {
     setup_guts
 }
 
-function guts_source {
+function gsource {
     source ${SCRIPTS_DIR}/guts
-    setup_guts_source
+    setup_gsource
 }
 
 function horizon {
@@ -93,11 +93,11 @@ case ${1} in
     keystone
     guts
     ;;
-"guts_source")
+"gsource")
     common
     openstack_common
     keystone
-    guts_source
+    gsource
     ;;
 "guts_dashboard")
     common
