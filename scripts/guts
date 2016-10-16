@@ -173,26 +173,36 @@ function add_guts_user_and_permissions {
     sudo chown $SERVICE:$SERVICE /etc/$SERVICE
 }
 
-function clone_and_install {
+function setup_guts_sudoers {
+
+    sudo bash -c "cat << EOF > /etc/sudoers.d/guts_sudoers
+Defaults:guts !requiretty
+
+guts ALL = (root) NOPASSWD: /usr/bin/guts-rootwrap
+EOF"
+
+}
+
+function _clone_and_install {
     package=$1
     git clone https://github.com/aptira/${package}.git ${STACK_DIR}/${package}
     sudo -H pip install -e ${STACK_DIR}/${package}
 }
 
-function install_guts_source {
+function install_gsource {
     sudo mkdir -p ${STACK_DIR} && sudo chown -R ${USER}:${USER} ${STACK_DIR}
-    clone_and_install guts
+    _clone_and_install guts
     cd ${STACK_DIR}/guts && sudo cp -R etc/* /etc/
-    clone_and_install python-gutsclient
+    _clone_and_install python-gutsclient
 }
 
 
 function setup_gsource {
     add_guts_user_and_permissions
+    setup_guts_sudoers
     setup_guts_database
     populate_keystone_guts
-    # clone_and_install guts
-    # install_guts_source
-    # configure_guts
+    install_gsource
+    configure_guts
     # verify_guts
 }
