@@ -62,6 +62,11 @@ function gsource {
     setup_gsource
 }
 
+function gdsource {
+    source ${SCRIPTS_DIR}/guts_dashboard
+    setup_guts_dashboard_source
+}
+
 function horizon {
     source ${SCRIPTS_DIR}/horizon
     setup_horizon
@@ -93,12 +98,6 @@ case ${1} in
     keystone
     guts
     ;;
-"gsource")
-    common
-    openstack_common
-    keystone
-    gsource
-    ;;
 "guts_dashboard")
     common
     openstack_common
@@ -106,6 +105,12 @@ case ${1} in
     guts
     horizon
     guts_dashboard
+"okanstack")
+    common
+    openstack_common
+    keystone
+    gsource
+    # gdsource
     ;;
 "aio")
     common

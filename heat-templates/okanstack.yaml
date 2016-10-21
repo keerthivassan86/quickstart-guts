@@ -16,7 +16,7 @@ parameters:
     keypair:
         type: string
         label: "Key Pair Name"
-        default: "cloud"
+        default: "alok"
         description: "Key to use for SSH access"
         constraints:
             - custom_constraint: nova.keypair
@@ -31,7 +31,7 @@ parameters:
     flavor:
         type: string
         label: "Instance Flavor"
-        default: "m1.medium"
+        default: "m1.large"
         description: "The flavor to use"
         constraints:
             - custom_constraint: nova.flavor
@@ -54,6 +54,10 @@ parameters:
         type: string
         label: Security Group Name
         description: "The Security Group Name to use"
+    floating_ip:
+        type: string
+        label: "Floating IP ID"
+        description: "Floating IP ID to use"
 
 resources:
     port:
@@ -65,6 +69,13 @@ resources:
                 - subnet_id: { get_param: subnet }
             security_groups:
                 - { get_param: security_group }
+    floatingip_ass:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_param: floating_ip }
+            port_id: { get_resource: port }
+        depends_on:
+            - port
     server:
         type: OS::Nova::Server
         properties:
@@ -84,7 +95,7 @@ resources:
                 elif [ -f /etc/lsb-release ]; then
                     usr="ubuntu"
                 fi
-                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh gsource" ${usr}
+                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-os.sh && chmod +x /tmp/quickstart-os.sh && time /tmp/quickstart-os.sh okanstack" ${usr}
                 echo "done"
 
             user_data_format: RAW
