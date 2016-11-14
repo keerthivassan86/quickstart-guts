@@ -105,6 +105,7 @@ case ${1} in
     guts
     horizon
     guts_dashboard
+    ;;
 "okanstack")
     common
     openstack_common

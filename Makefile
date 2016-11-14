@@ -62,6 +62,11 @@ boot_cdevstack:
 	-P security_group=${SEC_GRP_ALOK} -P floating_ip=${FLOATING_IP_181} \
 	-f "heat-templates/devstack.yaml" devstack
 
+boot_uokanbox:
+	heat stack-create -P image=${CENTOS7} -P network=${NETWORK_ALOK} \
+	-P subnet=${SUBNET_ALOK} -P security_group=${SEC_GRP_ALOK} \
+	-P floating_ip=${FLOATING_IP_204} -f "heat-templates/okanbox.yaml" okanbox
+
 build_u1404:
 	cd packer && ./packer build -var-file u1404_variables.json u1404.json
 
