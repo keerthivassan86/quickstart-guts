@@ -1,0 +1,7 @@
+
+include admin_constants
+
+setup_basic_components:
+	heat stack-create -P alok_subnet_cidr=${ALOK_SUBNET_CIDR} \
+	-P public_network_id=${PUBLIC_NETWORK_ID} \
+	-f "heat-templates/basic_components.yaml" basic_components

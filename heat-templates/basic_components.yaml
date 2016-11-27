@@ -1,0 +1,35 @@
+heat_template_version: 2014-10-16
+
+description: HOT template to create basic components in aptira network.
+
+parameters:
+  alok_subnet_cidr:
+    type: string
+    label: "CIDR for alok subnet for network alok"
+    description: "CIDR for alok subnet"
+  public_network_id:
+    type: string
+    label: "ID for public network"
+    description: "ID for public network"
+resources:
+  network_alok:
+    type: OS::Neutron::Net
+    properties:
+      name: "alok"
+  subnet_alok:
+    type: OS::Neutron::Subnet
+    properties:
+      name: "alok"
+      network: { get_resource: network_alok }
+      cidr: { get_param: alok_subnet_cidr }
+      dns_nameservers: [ "8.8.8.8" ]
+  router_alok:
+    type: OS::Neutron::Router
+    properties:
+      name: "alok"
+      external_gateway_info: { "network": { get_param: public_network_id } }
+  router_interface_alok:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router: { get_resource: "router_alok" }
+      subnet: { get_resource: "subnet_alok" }

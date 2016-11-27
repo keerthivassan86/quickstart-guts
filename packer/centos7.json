@@ -1,11 +1,4 @@
 {
-    "variables": {
-        "ssh_username": "",
-        "image_name": "",
-        "source_image_name": "",
-        "networks" : "",
-        "floating_ip": ""
-    },
     "builders": [
         {
             "type": "openstack",
