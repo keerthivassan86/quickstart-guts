@@ -1,5 +1,9 @@
 #!/bin/bash
 
+function customize {
+    wget https://raw.githubusercontent.com/rajalokan/dotfiles/master/setup-workspace.sh -O /tmp/setup-workspace.sh && /tmp/setup-workspace.sh && rm /tmp/setup-workspace.sh
+}
+
 function update_and_upgrade {
     update
     upgrade

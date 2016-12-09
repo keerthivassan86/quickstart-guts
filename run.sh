@@ -21,6 +21,7 @@ is_ubuntu && IP_ADDR=$(ifconfig eth0 | awk '/net addr/{print substr($2,6)}') || 
 
 function common {
     source ${SCRIPTS_DIR}/common
+    customize
     update_and_upgrade
 }
 
