@@ -84,6 +84,7 @@ resources:
                 elif [ -f /etc/lsb-release ]; then
                     usr="ubuntu"
                 fi
+                su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/dotfiles/master/setup-workspace.sh -O /tmp/setup-workspace.sh && chmod +x /tmp/setup-workspace.sh && /tmp/setup-workspace.sh && rm /tmp/setup-workspace.sh" ${USR}
                 su -s /bin/sh -c "wget https://raw.githubusercontent.com/rajalokan/quickstart-guts/master/quickstart-openstack.sh -O /tmp/quickstart-openstack.sh && chmod +x /tmp/quickstart-openstack.sh && time /tmp/quickstart-openstack.sh playbox" ${usr}
                 echo "done"
 
