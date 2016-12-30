@@ -197,7 +197,7 @@ function install_gsource {
 }
 
 
-function setup_gsource {
+function setup_guts_source {
     add_guts_user_and_permissions
     setup_guts_sudoers
     setup_guts_database

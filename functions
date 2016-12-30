@@ -162,7 +162,7 @@ function upgrade {
 
 function install_package {
     if is_ubuntu; then
-        sudo apt_get install -y "$@"
+        sudo apt-get install -y "$@"
     elif is_fedora; then
         sudo yum install -y "$@"
     else

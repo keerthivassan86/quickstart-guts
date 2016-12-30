@@ -18,7 +18,7 @@ function install_mysql {
         echo "mariadb-server mysql-server/root_password_again password ${PASSWORD}" | sudo debconf-set-selections
     fi
 
-    install_package mariadb mariadb-server
+    install_package  mariadb-server
 
     # Restart and setup secure installation
     is_ubuntu && sudo service mysql restart || sudo systemctl enable mariadb.service && sudo systemctl start mariadb.service

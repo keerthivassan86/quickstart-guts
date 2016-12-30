@@ -57,9 +57,9 @@ function guts {
     setup_guts
 }
 
-function gsource {
+function guts_source {
     source ${SCRIPTS_DIR}/guts
-    setup_gsource
+    setup_guts_source
 }
 
 function gdsource {
@@ -93,10 +93,16 @@ case ${1} in
     keystone
     ;;
 "guts")
+    # common
+    # openstack_common
+    # keystone
+    guts
+    ;;
+"guts_source")
     common
     openstack_common
     keystone
-    guts
+    guts_source
     ;;
 "guts_dashboard")
     common
