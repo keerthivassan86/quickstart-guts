@@ -110,7 +110,7 @@ case ${1} in
     keystone
     guts_source
     ;;
-"guts_dashboard_source"
+"guts_dashboard_source")
     horizon_source
     guts_dashboard_source
     ;;
