@@ -178,7 +178,7 @@ function setup_guts_sudoers {
     sudo bash -c "cat << EOF > /etc/sudoers.d/guts_sudoers
 Defaults:guts !requiretty
 
-guts ALL = (root) NOPASSWD: /usr/bin/guts-rootwrap
+guts ALL = (root) NOPASSWD: /usr/local/bin/guts-rootwrap
 EOF"
 
 }

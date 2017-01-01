@@ -120,13 +120,6 @@ case ${1} in
     keystone
     guts
     ;;
-"okanstack")
-    common
-    openstack_common
-    keystone
-    gsource
-    # gdsource
-    ;;
 "aio")
     common
     openstack_common
