@@ -37,6 +37,26 @@ function keystone {
     setup_keystone
 }
 
+function guts {
+    source ${SCRIPTS_DIR}/guts
+    setup_guts
+}
+
+function guts_source {
+    source ${SCRIPTS_DIR}/guts
+    setup_guts_source
+}
+
+function guts_dashboard {
+    source ${SCRIPTS_DIR}/guts-dashboard
+    setup_guts_dashboard
+}
+
+function guts_dashboard_source {
+    source ${SCRIPTS_DIR}/guts-dashboard
+    setup_guts_dashboard_source
+}
+
 function glance {
     source ${SCRIPTS_DIR}/glance
     setup_glance
@@ -52,36 +72,20 @@ function neutron {
     setup_neutron
 }
 
-function guts {
-    source ${SCRIPTS_DIR}/guts
-    setup_guts
-}
-
-function guts_source {
-    source ${SCRIPTS_DIR}/guts
-    setup_guts_source
-}
-
-function gdsource {
-    source ${SCRIPTS_DIR}/guts_dashboard
-    setup_guts_dashboard_source
-}
-
 function horizon {
     source ${SCRIPTS_DIR}/horizon
     setup_horizon
 }
 
-function guts_dashboard {
-    source ${SCRIPTS_DIR}/guts-dashboard
-    setup_guts_dashboard
+function horizon_source {
+    source ${SCRIPTS_DIR}/horizon
+    setup_horizon_source
 }
 
 function devstack {
     source ${SCRIPTS_DIR}/devstack
     setup_devstack
 }
-
 
 case ${1} in
 "playbox")
@@ -92,11 +96,13 @@ case ${1} in
     openstack_common
     keystone
     ;;
-"guts")
-    # common
-    # openstack_common
-    # keystone
-    guts
+"gutsdev")
+    common
+    openstack_common
+    keystone
+    guts_source
+    horizon_source
+    guts_dashboard_source
     ;;
 "guts_source")
     common
@@ -104,13 +110,15 @@ case ${1} in
     keystone
     guts_source
     ;;
-"guts_dashboard")
+"guts_dashboard_source"
+    horizon_source
+    guts_dashboard_source
+    ;;
+"guts")
     common
     openstack_common
     keystone
     guts
-    horizon
-    guts_dashboard
     ;;
 "okanstack")
     common

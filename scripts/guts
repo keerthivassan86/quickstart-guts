@@ -189,7 +189,7 @@ function _clone_and_install {
     sudo -H pip install -e ${STACK_DIR}/${package}
 }
 
-function install_gsource {
+function install_guts_source {
     sudo mkdir -p ${STACK_DIR} && sudo chown -R ${USER}:${USER} ${STACK_DIR}
     _clone_and_install guts
     cd ${STACK_DIR}/guts && sudo cp -R etc/* /etc/
@@ -202,7 +202,7 @@ function setup_guts_source {
     setup_guts_sudoers
     setup_guts_database
     populate_keystone_guts
-    install_gsource
+    install_guts_source
     configure_guts
     # verify_guts
 }
