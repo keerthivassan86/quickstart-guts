@@ -1,5 +1,5 @@
 *-openrc.sh
 *constants
 .tox/
-packer/packer
+packer/bin/packer
 packer/*_variables.json
