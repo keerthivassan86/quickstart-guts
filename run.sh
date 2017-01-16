@@ -27,9 +27,11 @@ function common {
 function openstack_common {
     source ${SCRIPTS_DIR}/openstack_common
     install_openstack_packages
+    install_clients
     install_mysql
     install_rabbitmq
-    install_clients
+    install_memcached
+
 }
 
 function keystone {
@@ -121,13 +123,13 @@ case ${1} in
     guts
     ;;
 "aio")
-    common
-    openstack_common
+    # common
+    # openstack_common
     keystone
-    glance
-    nova
-    neutron
-    horizon
+    # glance
+    # nova
+    # neutron
+    # horizon
     ;;
 "devstack")
     common

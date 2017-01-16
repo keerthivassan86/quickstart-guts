@@ -5,10 +5,14 @@ function install_openstack_packages {
         ubuntu_install_package ubuntu-cloud-keyring
         sudo apt-add-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main'
     elif is_fedora; then
-        fedora_install_package centos-release-openstack-mitaka
+        fedora_install_package centos-release-openstack-newton
     fi
     update
     upgrade
+}
+
+function install_clients {
+    install_package python-openstackclient
 }
 
 function install_mysql {
@@ -25,13 +29,8 @@ function install_mysql {
 
     if is_ubuntu; then
         ubuntu_install_package python-pymysql
-    elif is_fedora; then
-        mysqladmin -u root --password='' password $PASSWORD
-        fedora_install_package python2-PyMySQL
-    fi
-
-    # Configure your mysql installation
-    sudo bash -c 'cat << EOF > /etc/mysql/conf.d/openstack.cnf
+        # Configure your mysql installation
+        sudo bash -c 'cat << EOF > /etc/mysql/conf.d/openstack.cnf
 [mysqld]
 default-storage-engine = innodb
 innodb_file_per_table
@@ -39,7 +38,20 @@ max_connections = 4096
 collation-server = utf8_general_ci
 character-set-server = utf8
 EOF'
+    elif is_fedora; then
+        sudo bash -c 'cat << EOF > /etc/my.cnf.d/openstack.cnf
+[mysqld]
+bind-address = 10.0.0.11
 
+default-storage-engine = innodb
+innodb_file_per_table
+max_connections = 4096
+collation-server = utf8_general_ci
+character-set-server = utf8
+EOF'
+        mysqladmin -u root --password='' password $PASSWORD
+        fedora_install_package python2-PyMySQL
+    fi
 
     # TODO: Automate this
     # mysql_secure_installation
@@ -60,6 +72,7 @@ function install_rabbitmq {
     sudo rabbitmqctl list_users
 }
 
-function install_clients {
-    install_package python-openstackclient
+function install_memcached {
+    install_package memcached python-memcached
+    is_ubuntu && sudo service memcached  restart || sudo systemctl enable memcached.service && sudo systemctl start memcached.service
 }

@@ -36,61 +36,37 @@ connection = mysql+pymysql://keystone:${PASSWORD}@localhost/keystone
 [token]
 provider = fernet
 
-[extra_headers]
-Distribution = Ubuntu
 EOF"
 
     # Populate keystone database
     sudo su -s /bin/sh -c "keystone-manage db_sync" keystone
     # Initialize Fernet key repositories
     _init_fernet_key_repos
-    # Configure HTTP server
+    # Bootstrap identity Service
+    _bootstrap_identity_service
+    # # Configure HTTP server
     is_ubuntu && _configure_apache_httpd_ubuntu || _configure_apache_httpd_centos
-    # Remove file based db
+    # # Remove file based db
     sudo rm -f /var/lib/keystone/keystone.db
 }
 
 function _init_fernet_key_repos {
     sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+    sudo keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+}
+
+function _bootstrap_identity_service {
+    sudo keystone-manage bootstrap --bootstrap-password ${PASSWORD} \
+        --bootstrap-admin-url http://${IP_ADDR}:35357/v3/ \
+        --bootstrap-internal-url http://${IP_ADDR}:35357/v3/ \
+        --bootstrap-public-url http://${IP_ADDR}:5000/v3/ \
+        --bootstrap-region-id RegionOne
 }
 
 function _configure_apache_httpd_centos {
-    sudo bash -c 'cat <<EOF > /etc/httpd/conf.d/wsgi-keystone.conf
-Listen 5000
-Listen 35357
-
-<VirtualHost *:5000>
-    WSGIDaemonProcess keystone-public processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
-    WSGIProcessGroup keystone-public
-    WSGIScriptAlias / /usr/bin/keystone-wsgi-public
-    WSGIApplicationGroup %{GLOBAL}
-    WSGIPassAuthorization On
-    ErrorLogFormat "%{cu}t %M"
-    ErrorLog /var/log/httpd/keystone-error.log
-    CustomLog /var/log/httpd/keystone-access.log combined
-
-    <Directory /usr/bin>
-        Require all granted
-    </Directory>
-</VirtualHost>
-
-<VirtualHost *:35357>
-    WSGIDaemonProcess keystone-admin processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
-    WSGIProcessGroup keystone-admin
-    WSGIScriptAlias / /usr/bin/keystone-wsgi-admin
-    WSGIApplicationGroup %{GLOBAL}
-    WSGIPassAuthorization On
-    ErrorLogFormat "%{cu}t %M"
-    ErrorLog /var/log/httpd/keystone-error.log
-    CustomLog /var/log/httpd/keystone-access.log combined
-
-    <Directory /usr/bin>
-        Require all granted
-    </Directory>
-</VirtualHost>
-EOF'
-
-    sudo systemctl restart httpd.service
+    sudo ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
+    sudo systemctl enable httpd.service
+    sudo systemctl start httpd.service
 }
 
 function _configure_apache_httpd_ubuntu {
