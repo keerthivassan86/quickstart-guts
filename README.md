@@ -338,11 +338,13 @@ EOF"
 ```
 
 # setup_guts_database
+```
 mysql -u root -p${PASSWORD} << EOF
 CREATE DATABASE guts;
 GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'localhost' IDENTIFIED BY '${PASSWORD}';
 GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDENTIFIED BY '${PASSWORD}';
 EOF
+```
 
 # populate_keystone_guts
 ```
