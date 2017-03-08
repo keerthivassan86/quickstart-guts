@@ -406,3 +406,26 @@ EOF"
 # Populate database
 sudo su -s /bin/sh -c "guts-manage db sync" guts
 ```
+
+### Install and configure guts-dashboard
+
+```
+# Install horizon from source
+sudo mkdir -p ${STACK_DIR} && sudo chown -R ${USER}:${USER} ${STACK_DIR}
+git clone https://github.com/openstack/horizon ${STACK_DIR}/horizon
+sudo -H pip install -e ${STACK_DIR}/horizon
+if [ -r ${STACK_DIR}/horizon/openstack_dashboard/local/local_settings.py ]; then
+  rm ${STACK_DIR}/horizon/openstack_dashboard/local/local_settings.py
+fi
+cp ${STACK_DIR}/horizon/openstack_dashboard/local/local_settings.py.example ${STACK_DIR}/horizon/openstack_dashboard/local/local_settings.py
+    sudo bash -c 'cat << EOF >> /opt/stack/horizon/openstack_dashboard/local/local_settings.py
+ALLOWED_HOSTS = ["*"]
+OPENSTACK_API_VERSIONS = {
+    "identity": 3
+}
+EOF'
+
+
+```
+32
+```
