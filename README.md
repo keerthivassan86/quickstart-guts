@@ -212,7 +212,7 @@ source demo_openrc
 openstack user list && openstack service list
 ```
 
-### Setup Guts
+### Option 1 - Setup Guts from Binary
 
 #### Prepare Guts source
 ```
@@ -313,4 +313,94 @@ sudo apt-get install -y openstack-dashboard
 # Change local_settings to use version 3.
 
 sudo apt-get install -y guts-dashboard
+```
+
+### Option 2 - Setup Guts from Source
+```
+SERVICE=guts
+sudo useradd --home-dir "/var/lib/$SERVICE" --create-home --system --shell /bin/false $SERVICE
+
+#Create essential dirs
+sudo mkdir -p /var/log/$SERVICE
+sudo mkdir -p /etc/$SERVICE
+
+#Set ownership of the dirs
+sudo chown -R $SERVICE:$SERVICE /var/log/$SERVICE
+sudo chown -R $SERVICE:$SERVICE /var/lib/$SERVICE
+sudo chown $SERVICE:$SERVICE /etc/$SERVICE
+```
+# setup guts sudoers
+```
+sudo bash -c "cat << EOF > /etc/sudoers.d/guts_sudoers
+Defaults:guts !requiretty
+guts ALL = (root) NOPASSWD: /usr/local/bin/guts-rootwrap
+EOF"
+```
+
+# setup_guts_database
+mysql -u root -p${PASSWORD} << EOF
+CREATE DATABASE guts;
+GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'localhost' IDENTIFIED BY '${PASSWORD}';
+GRANT ALL PRIVILEGES ON guts.* TO 'guts'@'%' IDENTIFIED BY '${PASSWORD}';
+EOF
+
+# populate_keystone_guts
+```
+openstack user create --domain default --password ${PASSWORD} guts
+openstack role add --project service --user guts admin
+openstack service create --name guts --description "OpenStack Migration Service" migration
+openstack endpoint create --region RegionOne migration public http://${IP_ADDR}:7000/v1/%\(tenant_id\)s
+openstack endpoint create --region RegionOne migration internal http://${IP_ADDR}:7000/v1/%\(tenant_id\)s
+openstack endpoint create --region RegionOne migration admin http://${IP_ADDR}:87000/v1/%\(tenant_id\)s
+```
+
+
+# install_guts_source
+```
+# Create stack directory and give permissions
+STACK_DIR="/opt/stack"
+sudo mkdir -p ${STACK_DIR} && sudo chown -R ${USER}:${USER} ${STACK_DIR}
+
+# Clone and install guts
+git clone https://github.com/aptira/guts.git ${STACK_DIR}/guts
+sudo -H pip install -e ${STACK_DIR}/guts
+
+# Copy configuration files to /etc/guts
+cd ${STACK_DIR}/guts && sudo cp -R etc/* /etc/
+
+# Clone and install python-gutsclient
+git clone https://github.com/aptira/python-gutsclient.git ${STACK_DIR}/python-gutsclient
+sudo -H pip install -e ${STACK_DIR}/python-gutsclient
+```
+
+# configure_guts
+```
+sudo bash -c "cat << EOF > /etc/guts/guts.conf
+[DEFAULT]
+osapi_migration_workers = 2
+rpc_backend = rabbit
+debug = True
+auth_strategy = keystone
+[keystone_authtoken]
+auth_uri = http://localhost:5000
+auth_url = http://localhost:35357
+memcached_servers = localhost:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = guts
+password = ${PASSWORD}
+[database]
+connection = mysql+pymysql://guts:${PASSWORD}@localhost/guts
+[oslo_concurrency]
+lock_path = /var/lib/guts
+[oslo_messaging_rabbit]
+rabbit_userid = openstack
+rabbit_password = ${PASSWORD}
+rabbit_host = 127.0.0.1
+EOF"
+
+# Populate database
+sudo su -s /bin/sh -c "guts-manage db sync" guts
 ```
