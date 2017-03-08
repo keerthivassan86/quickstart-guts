@@ -364,14 +364,14 @@ STACK_DIR="/opt/stack"
 sudo mkdir -p ${STACK_DIR} && sudo chown -R ${USER}:${USER} ${STACK_DIR}
 
 # Clone and install guts
-git clone https://github.com/aptira/guts.git ${STACK_DIR}/guts
+git clone https://dev.aptira.com/bharat/guts.git ${STACK_DIR}/guts
 sudo -H pip install -e ${STACK_DIR}/guts
 
 # Copy configuration files to /etc/guts
 cd ${STACK_DIR}/guts && sudo cp -R etc/* /etc/
 
 # Clone and install python-gutsclient
-git clone https://github.com/aptira/python-gutsclient.git ${STACK_DIR}/python-gutsclient
+git clone https://dev.aptira.com/bharat/python-gutsclient.git ${STACK_DIR}/python-gutsclient
 sudo -H pip install -e ${STACK_DIR}/python-gutsclient
 ```
 
